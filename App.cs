@@ -1,22 +1,53 @@
-﻿using System.Configuration;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Data.SqlClient;
+
+using FinalProject.Data;
+using FinalProject.Controllers;
 
 namespace FinalProject
 {
+    public static class ServiceExtensions
+    {
+        public static IServiceCollection RegisterEngine(this IServiceCollection @this, IConfiguration conf)
+        {
+            var sqlConnection = new SqlConnection(conf.GetConnectionString("DefaultConnection"));
+
+            return @this.AddSingleton<Engine>(new Engine(conf, sqlConnection));
+        }
+
+        public static IServiceCollection RegisterControllers(this IServiceCollection @this)
+        {
+            return @this.AddScoped<IMemberController, MemberController>();
+        }
+    }
+
     public class App
     {
-        private readonly IConfiguration _conf;
+        public readonly IConfiguration conf;
 
-        public App(IConfiguration conf) => _conf = conf;
+        public readonly IServiceProvider services;
 
-
-        public void something()
+        public App()
         {
-            var connectionString = _conf["ConnectionStrings:DefaultConnection"];
+            conf = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                // .AddEnvironmentVariables()
+                // .AddCommandLine(args)
+                .Build();
 
-            Console.WriteLine(connectionString);
+            services = new ServiceCollection()
+                .AddSingleton(conf)
+                .RegisterEngine(conf)
+                .RegisterControllers()
+                .BuildServiceProvider();
+        }
 
+        public void Run()
+        {
+            var memberController = services.GetRequiredService<IMemberController>();
+
+            var member = memberController.Get(1);
         }
     }
 }
