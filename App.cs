@@ -11,8 +11,14 @@ namespace FinalProject
     {
         public static IServiceCollection RegisterEngine(this IServiceCollection @this, IConfiguration conf)
         {
-            var sqlConnection = new SqlConnection(conf.GetConnectionString("DefaultConnection"));
+            var builder = new SqlConnectionStringBuilder(conf.GetConnectionString("First_Semester_Project"));
 
+            builder.Password = conf["Password"];
+            builder.UserID = conf["User"];
+            builder.InitialCatalog = conf["DbName"];
+            builder.DataSource = conf["Server"];
+
+            var sqlConnection = new SqlConnection(builder.ConnectionString);
             return @this.AddSingleton<Engine>(new Engine(conf, sqlConnection));
         }
 
@@ -32,7 +38,7 @@ namespace FinalProject
         {
             conf = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                // .AddEnvironmentVariables()
+                .AddUserSecrets<App>()
                 // .AddCommandLine(args)
                 .Build();
 
@@ -45,9 +51,9 @@ namespace FinalProject
 
         public void Run()
         {
-            var memberController = services.GetRequiredService<IMemberController>();
+            // var memberController = services.GetRequiredService<IMemberController>();
 
-            var member = memberController.Get(1);
+            // var member = memberController.Get(1);
         }
     }
 }
