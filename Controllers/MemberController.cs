@@ -16,10 +16,7 @@ namespace FinalProject.Controllers
 
         public IEnumerable<Member> Get(int id)
         {
-            using (var con = engine.connection)
-            {
-                return con.Query<Member>("SELECT * FROM Member WHERE Member.MemberId = @Id", new { Id = id });
-            }
+            return null;
         }
     }
 }
