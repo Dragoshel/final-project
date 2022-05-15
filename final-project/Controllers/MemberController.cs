@@ -13,10 +13,5 @@ namespace FinalProject.Controllers
         {
             this.engine = engine;
         }
-
-        public IEnumerable<Member> Get(int id)
-        {
-            return null;
-        }
     }
 }

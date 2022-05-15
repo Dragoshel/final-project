@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
 using System.Data;
 
 namespace FinalProject.Data

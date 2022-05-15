@@ -1,9 +1,13 @@
 namespace FinalProject.Models
 {
-    public class Member
+    public class Author
     {
-        public int MemberID { get; set; }
+        public Guid ID { get; set; }
+
         public string FirstName { get; set; }
+
         public string LastName { get; set; }
+
+        public Guid BookAuthorID { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 
 using FinalProject.Data;
 using FinalProject.Controllers;
+using FinalProject.Repositories;
 
 namespace FinalProject
 {
@@ -11,20 +12,24 @@ namespace FinalProject
     {
         public static IServiceCollection RegisterEngine(this IServiceCollection @this, IConfiguration conf)
         {
-            var builder = new SqlConnectionStringBuilder(conf.GetConnectionString("First_Semester_Project"));
+            // var builder = new SqlConnectionStringBuilder(conf.GetConnectionString("First_Semester_Project"));
 
-            builder.Password = conf["Password"];
-            builder.UserID = conf["User"];
-            builder.InitialCatalog = conf["DbName"];
-            builder.DataSource = conf["Server"];
+            // builder.Password = conf["Password"];
+            // builder.UserID = conf["User"];
+            // builder.InitialCatalog = conf["DbName"];
+            // builder.DataSource = conf["Server"];
 
-            var sqlConnection = new SqlConnection(builder.ConnectionString);
+            // var sqlConnection = new SqlConnection(builder.ConnectionString);
+            var sqlConnection = new SqlConnection(conf.GetConnectionString("DefaultConnection"));
             return @this.AddSingleton<Engine>(new Engine(conf, sqlConnection));
         }
 
         public static IServiceCollection RegisterControllers(this IServiceCollection @this)
         {
-            return @this.AddScoped<IMemberController, MemberController>();
+            return @this
+                .AddScoped<IMemberController, MemberController>()
+                .AddScoped<IBookController, BookController>()
+                .AddScoped<IBookRepo, BookRepo>();
         }
     }
 
@@ -49,11 +54,9 @@ namespace FinalProject
                 .BuildServiceProvider();
         }
 
-        public void Run()
+        public async Task Run()
         {
-            // var memberController = services.GetRequiredService<IMemberController>();
-
-            // var member = memberController.Get(1);
+            // var bookController = services.GetRequiredService<IBookController>();
         }
     }
 }
