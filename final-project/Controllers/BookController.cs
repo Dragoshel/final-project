@@ -2,7 +2,7 @@ using FinalProject.Data;
 using FinalProject.Models;
 using FinalProject.Repositories;
 
-using Dapper;
+using Microsoft.Extensions.Logging;
 
 namespace FinalProject.Controllers
 {
@@ -12,41 +12,58 @@ namespace FinalProject.Controllers
 
         private readonly IBookRepo bookRepo;
 
-        public BookController(Engine engine, IBookRepo bookRepo)
+        private readonly ILogger logger;
+
+
+        public BookController(Engine engine, IBookRepo bookRepo, ILogger<IBookController> logger)
         {
             this.engine = engine;
             this.bookRepo = bookRepo;
+            this.logger = logger;
+        }
+
+        private async Task<bool> Check_If_Book_Exists(string ISBN)
+        {
+            var foundBook = await this.bookRepo.GetAsync(ISBN);
+
+            return foundBook is null ? false : true;
         }
 
         public async Task CreateAsync(Book book)
         {
-            // var newBook = new Book()
-            // {
-            //     ISBN = "978-1119540922",
-            //     Title = "Hunting Cyber Criminals: A Hacker's Guide to Online Intelligence Gathering Tools and Techniques",
-            //     Edition = "1st Edition",
-            //     Subject = "Cybercrimology",
-            //     Description = "The skills and tools for collecting, verifying and correlating information from different types of systems is an essential skill when tracking down hackers.",
-            //     IsLendable = true,
-            //     InStock = true,
-            // };
-
             await this.bookRepo.CreateAsync(book);
+
+            logger.LogInformation("Successfully created.");
         }
 
         public async Task<Book> GetAsync(string ISBN)
         {
+            if (await Check_If_Book_Exists(ISBN) is false)
+                throw new FinalProjectException($"The book with ISBN={ISBN} does not exist.");
+
             return await this.bookRepo.GetAsync(ISBN);
         }
 
         public async Task DeleteAsync(string ISBN)
         {
-            await this.bookRepo.DeleteAsync(ISBN);
+            if (await Check_If_Book_Exists(ISBN) is false)
+                throw new FinalProjectException($"The book with ISBN={ISBN} does not exist.");
+
+            var result = await this.bookRepo.DeleteAsync(ISBN);
+
+            if (result < 1)
+                throw new FinalProjectException($"Could not Delete book with ISBN={ISBN}.");
         }
 
         public async Task UpdateAsync(string ISBN, Book book)
         {
-            await this.bookRepo.UpdateAsync(ISBN, book);
+            if (await Check_If_Book_Exists(ISBN) is false)
+                throw new FinalProjectException($"The book with ISBN={ISBN} does not exist.");
+
+            var result = await this.bookRepo.UpdateAsync(ISBN, book);
+
+            if (result < 1)
+                throw new FinalProjectException($"Could not Update book with ISBN={ISBN}.");
         }
     }
 }

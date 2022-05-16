@@ -1,38 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 
-using FinalProject.Data;
+using FinalProject.DI;
 using FinalProject.Controllers;
-using FinalProject.Repositories;
+using FinalProject.Models;
 
 namespace FinalProject
 {
-    public static class ServiceExtensions
-    {
-        public static IServiceCollection RegisterEngine(this IServiceCollection @this, IConfiguration conf)
-        {
-            // var builder = new SqlConnectionStringBuilder(conf.GetConnectionString("First_Semester_Project"));
-
-            // builder.Password = conf["Password"];
-            // builder.UserID = conf["User"];
-            // builder.InitialCatalog = conf["DbName"];
-            // builder.DataSource = conf["Server"];
-
-            // var sqlConnection = new SqlConnection(builder.ConnectionString);
-            var sqlConnection = new SqlConnection(conf.GetConnectionString("DefaultConnection"));
-            return @this.AddSingleton<Engine>(new Engine(conf, sqlConnection));
-        }
-
-        public static IServiceCollection RegisterControllers(this IServiceCollection @this)
-        {
-            return @this
-                .AddScoped<IMemberController, MemberController>()
-                .AddScoped<IBookController, BookController>()
-                .AddScoped<IBookRepo, BookRepo>();
-        }
-    }
-
     public class App
     {
         public readonly IConfiguration conf;
@@ -44,11 +19,14 @@ namespace FinalProject
             conf = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddUserSecrets<App>()
+                .AddEnvironmentVariables()
                 // .AddCommandLine(args)
                 .Build();
 
             services = new ServiceCollection()
-                .AddSingleton(conf)
+                .AddLogging(options =>
+                    options.ClearProviders().AddConsole().AddDebug()
+                )
                 .RegisterEngine(conf)
                 .RegisterControllers()
                 .BuildServiceProvider();
@@ -56,7 +34,30 @@ namespace FinalProject
 
         public async Task Run()
         {
-            // var bookController = services.GetRequiredService<IBookController>();
+            // Console.Beep();
+            var bookController = services.GetRequiredService<IBookController>();
+            var logger = services.GetRequiredService<ILogger<IBookController>>();
+            var book = new Book
+            {
+                ISBN = "a2",
+                Title = "a",
+                Description = "a",
+                Edition = "a",
+                Subject = "a",
+                InStock = true,
+                IsLendable = true
+            };
+
+
+            try
+            {
+                await bookController.CreateAsync(book);
+            }
+            catch (Exception ex)
+            {
+                logger.LogInformation(ex.Message);
+
+            }
         }
     }
 }

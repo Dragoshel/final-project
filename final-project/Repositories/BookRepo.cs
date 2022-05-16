@@ -14,19 +14,17 @@ namespace FinalProject.Repositories
             this.engine = engine;
         }
 
-        public async Task CreateAsync(Book newBook)
+        public async Task<int> CreateAsync(Book newBook)
         {
             var sql = @"INSERT INTO Book
-                        (ISBN, Title, Edition, Subject, Description, IsLendable, InStock, BookAuthorID)
-                        VALUES (@ISBN, @Title, @Edition, @Subject, @Description, @IsLendable, @InStock, @BookAuthorID)
-                        ";
+                        (ISBN, Title, Edition, Subject, Description, IsLendable, InStock)
+                        VALUES (@ISBN, @Title, @Edition, @Subject, @Description, @IsLendable, @InStock)";
 
             using (var con = this.engine.connection)
             {
                 var count = await con.ExecuteAsync(sql, newBook);
 
-                if (count < 1)
-                    throw new DbException("Insert statement did not insert any data.");
+                return count;
             }
         }
 
@@ -34,47 +32,41 @@ namespace FinalProject.Repositories
         {
             var sql = @"SELECT *
                         FROM Book
-                        WHERE Book.ISBN = @ISBN
-                        ";
+                        WHERE Book.ISBN = @ISBN";
+
             using (var con = this.engine.connection)
             {
                 var bookResult = await con.QueryAsync<Book>(sql, new { ISBN = ISBN });
 
-                if (bookResult.Count() < 1)
-                    throw new DbException($"Did not find book with ISBN={ISBN}.");
-
-                return bookResult.First();
+                return bookResult.Count() < 1 ? null : bookResult.First();
             }
         }
 
-        public async Task DeleteAsync(string ISBN)
+        public async Task<int> DeleteAsync(string ISBN)
         {
             var sql = @"DELETE FROM Book
-                        WHERE Book.ISBN=@ISBN
-                        ";
+                        WHERE Book.ISBN=@ISBN";
+
             using (var con = this.engine.connection)
             {
                 var count = await con.ExecuteAsync(sql);
 
-                if (count < 1)
-                    throw new DbException("Delete statement did not delete any data.");
+                return count;
             }
         }
 
-        public async Task UpdateAsync(string ISBN, Book newBook)
+        public async Task<int> UpdateAsync(string ISBN, Book newBook)
         {
             var sql = @"UPDATE Book
                         SET Title=@Title, Edition=@Edition, Subject=@Subject, Description=@Description,
-                            IsLendable=@IsLendable, InStock=@InStock, BookAuthorID=@BookAuthorID
-                        WHERE Book.ISBN=@ISBN
-                        ";
+                            IsLendable=@IsLendable, InStock=@InStock
+                        WHERE Book.ISBN=@ISBN";
 
             using (var con = this.engine.connection)
             {
                 var count = await con.ExecuteAsync(sql, newBook);
 
-                if (count < 1)
-                    throw new DbException("Update statement did not update any data.");
+                return count;
             }
         }
     }

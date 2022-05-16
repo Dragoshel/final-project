@@ -4,7 +4,9 @@ namespace FinalProject
     {
         public static async Task Main(string[] args)
         {
-            await new App().Run();
+            var app = new App();
+
+            await app.Run();
         }
     }
 }
