@@ -1,7 +1,6 @@
-namespace FinalProject.Models
+namespace FinalProject.Models;
+
+public class Library
 {
-    public class Library
-    {
-        public Guid ID { get; set; }
-    }
+    public Guid ID { get; set; }
 }

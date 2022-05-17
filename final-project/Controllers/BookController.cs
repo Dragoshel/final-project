@@ -1,69 +1,84 @@
-using FinalProject.Data;
+using Microsoft.AspNetCore.Mvc;
+
+using FinalProject.Services;
 using FinalProject.Models;
-using FinalProject.Repositories;
 
-using Microsoft.Extensions.Logging;
+namespace FinalProject.Controllers;
 
-namespace FinalProject.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class BookController : ControllerBase
 {
-    public class BookController : IBookController
+    private readonly IBookService _bookService;
+
+    private readonly ILogger<IBookService> _logger;
+
+    public BookController(IBookService bookService, ILogger<IBookService> logger)
     {
-        private readonly Engine engine;
+        _bookService = bookService;
+        _logger = logger;
+    }
 
-        private readonly IBookRepo bookRepo;
-
-        private readonly ILogger logger;
-
-
-        public BookController(Engine engine, IBookRepo bookRepo, ILogger<IBookController> logger)
+    [HttpPost("create")]
+    public async Task<ActionResult<Book>> CreateAsync(Book book)
+    {
+        try
         {
-            this.engine = engine;
-            this.bookRepo = bookRepo;
-            this.logger = logger;
+            await _bookService.CreateAsync(book);
+
+            _logger.LogInformation("Created new book");
+
+            return Ok(book);
         }
-
-        private async Task<bool> Check_If_Book_Exists(string ISBN)
+        catch (Exception)
         {
-            var foundBook = await this.bookRepo.GetAsync(ISBN);
-
-            return foundBook is null ? false : true;
+            // Ask the bois about this
+            throw;
         }
+    }
 
-        public async Task CreateAsync(Book book)
+    [HttpGet("get/{ISBN}")]
+    public async Task<ActionResult> GetAsync(string ISBN)
+    {
+        try
         {
-            await this.bookRepo.CreateAsync(book);
+            var book = await _bookService.GetAsync(ISBN);
 
-            logger.LogInformation("Successfully created.");
+            return Ok(book);
         }
-
-        public async Task<Book> GetAsync(string ISBN)
+        catch (Exception)
         {
-            if (await Check_If_Book_Exists(ISBN) is false)
-                throw new FinalProjectException($"The book with ISBN={ISBN} does not exist.");
-
-            return await this.bookRepo.GetAsync(ISBN);
+            throw;
         }
+    }
 
-        public async Task DeleteAsync(string ISBN)
+    [HttpDelete("delete/{isbn}")]
+    public async Task<ActionResult> DeleteAsync(string ISBN)
+    {
+        try
         {
-            if (await Check_If_Book_Exists(ISBN) is false)
-                throw new FinalProjectException($"The book with ISBN={ISBN} does not exist.");
+            await _bookService.DeleteAsync(ISBN);
 
-            var result = await this.bookRepo.DeleteAsync(ISBN);
-
-            if (result < 1)
-                throw new FinalProjectException($"Could not Delete book with ISBN={ISBN}.");
+            return Ok(new { Message = $"Successfully deleted book with ISBN={ISBN}" });
         }
-
-        public async Task UpdateAsync(string ISBN, Book book)
+        catch (Exception)
         {
-            if (await Check_If_Book_Exists(ISBN) is false)
-                throw new FinalProjectException($"The book with ISBN={ISBN} does not exist.");
+            throw;
+        }
+    }
 
-            var result = await this.bookRepo.UpdateAsync(ISBN, book);
+    [HttpPut("update/{isbn}")]
+    public async Task<ActionResult> UpdateAsync(string ISBN, Book book)
+    {
+        try
+        {
+            await _bookService.UpdateAsync(ISBN, book);
 
-            if (result < 1)
-                throw new FinalProjectException($"Could not Update book with ISBN={ISBN}.");
+            return Ok(new { Message = $"Successfully updated book with ISBN={ISBN}", Book = book });
+        }
+        catch (System.Exception)
+        {
+            throw;
         }
     }
 }

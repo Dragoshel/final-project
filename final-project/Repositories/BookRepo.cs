@@ -3,71 +3,67 @@ using FinalProject.Models;
 
 using Dapper;
 
-namespace FinalProject.Repositories
+namespace FinalProject.Repos;
+
+public class BookRepo : IBookRepo
 {
-    public class BookRepo : IBookRepo
+    private readonly Engine _engine;
+
+    public BookRepo(Engine engine) => _engine = engine;
+
+    public async Task<int> CreateAsync(Book newBook)
     {
-        private readonly Engine engine;
+        var sql = @"INSERT INTO Book
+                    (ISBN, Title, Edition, Subject, Description, IsLendable, InStock)
+                    VALUES (@ISBN, @Title, @Edition, @Subject, @Description, @IsLendable, @InStock)";
 
-        public BookRepo(Engine engine)
+        using (var con = _engine.connection)
         {
-            this.engine = engine;
+            var count = await con.ExecuteAsync(sql, newBook);
+
+            return count;
         }
+    }
 
-        public async Task<int> CreateAsync(Book newBook)
+    public async Task<Book> GetAsync(string ISBN)
+    {
+        var sql = @"SELECT *
+                    FROM Book
+                    WHERE Book.ISBN = @ISBN";
+
+        using (var con = _engine.connection)
         {
-            var sql = @"INSERT INTO Book
-                        (ISBN, Title, Edition, Subject, Description, IsLendable, InStock)
-                        VALUES (@ISBN, @Title, @Edition, @Subject, @Description, @IsLendable, @InStock)";
+            var bookResult = await con.QueryAsync<Book>(sql, new { ISBN = ISBN });
 
-            using (var con = this.engine.connection)
-            {
-                var count = await con.ExecuteAsync(sql, newBook);
-
-                return count;
-            }
+            return bookResult.Count() < 1 ? null : bookResult.First();
         }
+    }
 
-        public async Task<Book> GetAsync(string ISBN)
+    public async Task<int> DeleteAsync(string ISBN)
+    {
+        var sql = @"DELETE FROM Book
+                    WHERE Book.ISBN=@ISBN";
+
+        using (var con = _engine.connection)
         {
-            var sql = @"SELECT *
-                        FROM Book
-                        WHERE Book.ISBN = @ISBN";
+            var count = await con.ExecuteAsync(sql);
 
-            using (var con = this.engine.connection)
-            {
-                var bookResult = await con.QueryAsync<Book>(sql, new { ISBN = ISBN });
-
-                return bookResult.Count() < 1 ? null : bookResult.First();
-            }
+            return count;
         }
+    }
 
-        public async Task<int> DeleteAsync(string ISBN)
+    public async Task<int> UpdateAsync(string ISBN, Book newBook)
+    {
+        var sql = @"UPDATE Book
+                    SET Title=@Title, Edition=@Edition, Subject=@Subject, Description=@Description,
+                        IsLendable=@IsLendable, InStock=@InStock
+                    WHERE Book.ISBN=@ISBN";
+
+        using (var con = _engine.connection)
         {
-            var sql = @"DELETE FROM Book
-                        WHERE Book.ISBN=@ISBN";
+            var count = await con.ExecuteAsync(sql, newBook);
 
-            using (var con = this.engine.connection)
-            {
-                var count = await con.ExecuteAsync(sql);
-
-                return count;
-            }
-        }
-
-        public async Task<int> UpdateAsync(string ISBN, Book newBook)
-        {
-            var sql = @"UPDATE Book
-                        SET Title=@Title, Edition=@Edition, Subject=@Subject, Description=@Description,
-                            IsLendable=@IsLendable, InStock=@InStock
-                        WHERE Book.ISBN=@ISBN";
-
-            using (var con = this.engine.connection)
-            {
-                var count = await con.ExecuteAsync(sql, newBook);
-
-                return count;
-            }
+            return count;
         }
     }
 }
