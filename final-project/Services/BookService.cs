@@ -27,9 +27,9 @@ public class BookService : IBookService
         return foundBook;
     }
 
-    public async Task CreateAsync(Book book)
+    public async Task CreateAsync(Book newBook)
     {
-        var result = await _bookRepo.CreateAsync(book);
+        var result = await _bookRepo.CreateAsync(newBook);
 
         if (result < 1)
             throw new FinalProjectException($"Could not create new book");
@@ -53,17 +53,17 @@ public class BookService : IBookService
         var result = await _bookRepo.DeleteAsync(ISBN);
 
         if (result < 1)
-            throw new FinalProjectException($"Could not Delete book with ISBN={ISBN}.");
+            throw new FinalProjectException($"Could not delete book with ISBN={ISBN}.");
     }
 
-    public async Task UpdateAsync(string ISBN, Book book)
+    public async Task UpdateAsync(string ISBN, Book newBook)
     {
         if (await Check_If_Book_Exists(ISBN) is null)
             throw new FinalProjectException($"The book with ISBN={ISBN} does not exist.");
 
-        var result = await _bookRepo.UpdateAsync(ISBN, book);
+        var result = await _bookRepo.UpdateAsync(ISBN, newBook);
 
         if (result < 1)
-            throw new FinalProjectException($"Could not Update book with ISBN={ISBN}.");
+            throw new FinalProjectException($"Could not update book with ISBN={ISBN}.");
     }
 }

@@ -23,7 +23,6 @@ namespace FinalProjectTests
 
         public void Dispose()
         {
-            engine.Dispose();
         }
     }
 }

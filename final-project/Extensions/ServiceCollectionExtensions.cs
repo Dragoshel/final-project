@@ -15,11 +15,15 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddRepos(this IServiceCollection @this)
     {
-        return @this.AddScoped<IBookRepo, BookRepo>();
+        return @this
+            .AddScoped<IBookRepo, BookRepo>()
+            .AddScoped<IMemberRepo, MemberRepo>();
     }
 
     public static IServiceCollection AddServices(this IServiceCollection @this)
     {
-        return @this.AddScoped<IBookService, BookService>();
+        return @this
+            .AddScoped<IBookService, BookService>()
+            .AddScoped<IMemberService, MemberService>();
     }
 }

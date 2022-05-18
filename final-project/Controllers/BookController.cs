@@ -52,7 +52,7 @@ public class BookController : ControllerBase
         }
     }
 
-    [HttpDelete("delete/{isbn}")]
+    [HttpDelete("delete/{ISBN}")]
     public async Task<ActionResult> DeleteAsync(string ISBN)
     {
         try
@@ -67,7 +67,7 @@ public class BookController : ControllerBase
         }
     }
 
-    [HttpPut("update/{isbn}")]
+    [HttpPut("update/{ISBN}")]
     public async Task<ActionResult> UpdateAsync(string ISBN, Book book)
     {
         try

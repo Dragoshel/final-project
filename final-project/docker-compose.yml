@@ -1,0 +1,22 @@
+services:
+  api:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "5001:5001"
+    depends_on:
+      - db
+    environment:
+      "DATA SOURCE": "db"
+      "INITIAL CATALOG": "tempdb"
+      "USER ID": "sa"
+      "PASSWORD": "Pass1234"
+      "ASPNETCORE_ENVIRONMENT": "Development"
+  db:
+    image: "mcr.microsoft.com/mssql/server"
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "Pass1234"
+      ACCEPT_EULA: "Y"

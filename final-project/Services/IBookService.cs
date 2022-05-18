@@ -4,11 +4,11 @@ namespace FinalProject.Services;
 
 public interface IBookService
 {
-    Task CreateAsync(Book book);
+    Task CreateAsync(Book newBook);
 
     Task<Book> GetAsync(string ISBN);
 
     Task DeleteAsync(string ISBN);
 
-    Task UpdateAsync(string ISBN, Book book);
+    Task UpdateAsync(string ISBN, Book newBook);
 }

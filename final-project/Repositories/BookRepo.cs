@@ -14,11 +14,13 @@ public class BookRepo : IBookRepo
     public async Task<int> CreateAsync(Book newBook)
     {
         var sql = @"INSERT INTO Book
-                    (ISBN, Title, Edition, Subject, Description, IsLendable, InStock)
+                    (isbn, title, edition, subject, description, isLendable, inStock)
                     VALUES (@ISBN, @Title, @Edition, @Subject, @Description, @IsLendable, @InStock)";
 
-        using (var con = _engine.connection)
+        using (var con = _engine.MakeConnection())
         {
+            con.Open();
+
             var count = await con.ExecuteAsync(sql, newBook);
 
             return count;
@@ -29,10 +31,12 @@ public class BookRepo : IBookRepo
     {
         var sql = @"SELECT *
                     FROM Book
-                    WHERE Book.ISBN = @ISBN";
+                    WHERE Book.isbn=@ISBN";
 
-        using (var con = _engine.connection)
+        using (var con = _engine.MakeConnection())
         {
+            con.Open();
+
             var bookResult = await con.QueryAsync<Book>(sql, new { ISBN = ISBN });
 
             return bookResult.Count() < 1 ? null : bookResult.First();
@@ -42,10 +46,12 @@ public class BookRepo : IBookRepo
     public async Task<int> DeleteAsync(string ISBN)
     {
         var sql = @"DELETE FROM Book
-                    WHERE Book.ISBN=@ISBN";
+                    WHERE Book.isbn=@ISBN";
 
-        using (var con = _engine.connection)
+        using (var con = _engine.MakeConnection())
         {
+            con.Open();
+
             var count = await con.ExecuteAsync(sql);
 
             return count;
@@ -55,12 +61,14 @@ public class BookRepo : IBookRepo
     public async Task<int> UpdateAsync(string ISBN, Book newBook)
     {
         var sql = @"UPDATE Book
-                    SET Title=@Title, Edition=@Edition, Subject=@Subject, Description=@Description,
-                        IsLendable=@IsLendable, InStock=@InStock
-                    WHERE Book.ISBN=@ISBN";
+                    SET title=@Title, edition=@Edition, subject=@Subject,
+                    description=@Description, isLendable=@IsLendable, inStock=@InStock
+                    WHERE Book.isbn=@ISBN";
 
-        using (var con = _engine.connection)
+        using (var con = _engine.MakeConnection())
         {
+            con.Open();
+
             var count = await con.ExecuteAsync(sql, newBook);
 
             return count;

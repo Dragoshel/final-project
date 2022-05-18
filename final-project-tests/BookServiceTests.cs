@@ -25,12 +25,6 @@ namespace FinalProjectTests
             _sut = new BookService(_fixture.engine, _bookRepoMock.Object, _loggerMock.Object);
         }
 
-        [Fact]
-        public void Test_Connection()
-        {
-            Console.WriteLine(_fixture.engine.connection.ConnectionString);
-            Assert.Equal(_fixture.engine.connection.State.ToString(), "Closed");
-        }
 
         [Fact]
         public async Task GetBookByISBN_ShouldReturnBook_WhenBookExists()
