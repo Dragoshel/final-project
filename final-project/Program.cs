@@ -23,7 +23,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.SeedDatabase("Data/seed.sql");
+    app.SeedDatabase("Data/SQL/tables.sql");
+    app.SeedDatabase("Data/SQL/spCreateStudent.sql");
+    app.SeedDatabase("Data/SQL/spCreateTeacher.sql");
     app.UseSwagger();
     app.UseSwaggerUI();
 }

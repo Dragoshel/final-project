@@ -10,15 +10,13 @@ public class Member
 
     public string PhoneNum { get; set; }
 
-    public Type MemberType { get; set; }
+    public DateTime Expiration { get; set; }
 
-    public Guid CardID { get; set; }
+    public Type MemberType { get; set; } = Type.Student;
 
     public Guid AddressID { get; set; }
 
-    public Guid LibraryID { get; set; }
-
-    public Guid TypeID { get; set; }
+    public Guid MemberTypeID { get; set; }
 
     public enum Type
     {

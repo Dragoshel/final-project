@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using FinalProject.Services;
+using FinalProject.Repos;
 using FinalProject.Models;
 
 namespace FinalProject.Controllers;
@@ -19,14 +20,30 @@ public class MemberController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost("create")]
-    public async Task<ActionResult<Member>> CreateAsync(Member newMember)
+    [HttpPost("create-student")]
+    public async Task<ActionResult<Member>> CreateStudentAsync(StudentDto studentDto)
     {
         try
         {
-            await _memberService.CreateAsync(newMember);
+            var member = await _memberService.CreateStudentAsync(studentDto);
 
-            return Ok(newMember);
+            return Ok(member);
+        }
+        catch (Exception)
+        {
+            // Ask the bois about this
+            throw;
+        }
+    }
+
+    [HttpPost("create-teacher")]
+    public async Task<ActionResult<Member>> CreateTeacherAsync(TeacherDto teacherDto)
+    {
+        try
+        {
+            var member = await _memberService.CreateTeacherAsync(teacherDto);
+
+            return Ok(member);
         }
         catch (Exception)
         {

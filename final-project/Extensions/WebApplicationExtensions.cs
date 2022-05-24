@@ -19,7 +19,7 @@ public static class WebApplicationExtensions
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Could not seed database.");
+            Console.WriteLine("---Could not seed database");
             Console.WriteLine(ex.Message);
         }
         

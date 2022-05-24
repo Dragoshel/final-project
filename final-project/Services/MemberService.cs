@@ -4,28 +4,6 @@ using FinalProject.Models;
 
 namespace FinalProject.Services;
 
-public class MemberDto
-{
-    public string Ssn { get; set; }
-
-    public string FirstName { get; set; }
-
-    public string LastName { get; set; }
-
-    public string PhoneNum { get; set; }
-
-    public Member.Type MemberType { get; set; }
-
-    public string Country { get; set; }
-
-    public string City { get; set; }
-
-    public string AddressLine1 { get; set; }
-
-    public string AddressLine2 { get; set; }
-
-    public string PostCode { get; set; }
-}
 
 public class MemberService : IMemberService
 {
@@ -48,22 +26,26 @@ public class MemberService : IMemberService
         var foundBook = await _memberRepo.GetAsync(ISBN);
 
         return foundBook;
+    } 
+
+    public async Task<Member> CreateTeacherAsync(TeacherDto teacherDto)
+    {
+        var memberSsnResult = await _memberRepo.CreateTeacherAsync(teacherDto);
+
+        if (memberSsnResult is null)
+            throw new FinalProjectException("Creating student member failed.");
+        
+        return memberSsnResult;
     }
 
-    public async Task CreateAsync(Member newMember)
+    public async Task<Member> CreateStudentAsync(StudentDto studentDto)
     {
-        // var address = new Address() {
-        //     Country = newMember.Country,
-        //     City = newMember.City,
-        //     AddressLine1 = newMember.AddressLine1,
-        //     AddressLine2 = newMember.AddressLine2,
-        //     PostCode = newMember.PostCode
-        // };
+        var memberSsnResult = await _memberRepo.CreateStudentAsync(studentDto);
 
-        var result = await _memberRepo.CreateAsync(newMember);
-
-        if (result < 1)
-            throw new FinalProjectException($"Could not create new member");
+        if (memberSsnResult is null)
+            throw new FinalProjectException("Creating student member failed.");
+        
+        return memberSsnResult;
     }
 
     public async Task<Member> GetAsync(string SSN)
