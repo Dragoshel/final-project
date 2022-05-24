@@ -55,6 +55,7 @@ public class MemberRepo : IMemberRepo
     {
         var member = new Member()
         {
+            CardID = Guid.Parse(memberObj.cardID.ToString()),
             Ssn = memberObj.ssn,
             FirstName = memberObj.firstName,
             LastName = memberObj.lastName,
@@ -95,49 +96,49 @@ public class MemberRepo : IMemberRepo
         }
     }
 
-    public async Task<Member> GetAsync(string ssn)
+    public async Task<Member> GetAsync(Guid cardID)
     {
         var sql = @"SELECT *
                     FROM Member
-                    WHERE Member.ssn=@Ssn";
+                    WHERE Member.cardID=@CardID";
 
         using (var con = _engine.MakeConnection())
         {
             con.Open();
 
-            var memberObj = await con.QueryAsync(sql, new { ssn = ssn });
+            var memberObj = await con.QueryAsync(sql, new { CardID = cardID });
 
             return memberObj.Count() < 1 ? null : DapperToMember(memberObj.First());
         }
     }
 
-    public async Task<int> DeleteAsync(string ssn)
+    public async Task<int> DeleteAsync(Guid cardID)
     {
         var sql = @"DELETE FROM Member
-                    WHERE Member.ssn=@Ssn";
+                    WHERE Member.cardID=@CardID";
 
         using (var con = _engine.MakeConnection())
         {
             con.Open();
 
-            var count = await con.ExecuteAsync(sql, new { ssn = ssn });
+            var count = await con.ExecuteAsync(sql, new { CardID = cardID });
 
             return count;
         }
     }
 
-    public async Task<int> UpdateAsync(string ssn, Member member)
+    public async Task<int> UpdateAsync(Guid cardID, Member member)
     {
         var sql = @"UPDATE Member
                     SET firstName=@FirstName, lastName=@LastName, phoneNum=@PhoneNum,
                         expiration=@Expiration, addressID=@AddressID, memberTypeID=@MemberTypeID
-                    WHERE Member.ssn=@Ssn";
+                    WHERE Member.cardID=@CardID";
 
         using (var con = _engine.MakeConnection())
         {
             con.Open();
 
-            member.Ssn = ssn;
+            member.CardID = cardID;
 
             var count = await con.ExecuteAsync(sql, member);
 

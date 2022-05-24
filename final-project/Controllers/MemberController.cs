@@ -52,14 +52,14 @@ public class MemberController : ControllerBase
         }
     }
 
-    [HttpGet("get/{SSN}")]
-    public async Task<ActionResult> GetAsync(string SSN)
+    [HttpGet("get/{cardID}")]
+    public async Task<ActionResult<Member>> GetAsync(Guid cardID)
     {
         try
         {
-            var book = await _memberService.GetAsync(SSN);
+            var member = await _memberService.GetAsync(cardID);
 
-            return Ok(book);
+            return Ok(member);
         }
         catch (Exception)
         {
@@ -67,14 +67,14 @@ public class MemberController : ControllerBase
         }
     }
 
-    [HttpDelete("delete/{SSN}")]
-    public async Task<ActionResult> DeleteAsync(string SSN)
+    [HttpDelete("delete/{cardID}")]
+    public async Task<ActionResult> DeleteAsync(Guid cardID)
     {
         try
         {
-            await _memberService.DeleteAsync(SSN);
+            await _memberService.DeleteAsync(cardID);
 
-            return Ok(new { Message = $"Successfully deleted book with SSN={SSN}" });
+            return Ok(new { Message = $"Successfully deleted book with card id {cardID}" });
         }
         catch (Exception)
         {
@@ -82,14 +82,14 @@ public class MemberController : ControllerBase
         }
     }
 
-    [HttpPut("update/{SSN}")]
-    public async Task<ActionResult> UpdateAsync(string SSN, Member newMember)
+    [HttpPut("update/{cardID}")]
+    public async Task<ActionResult> UpdateAsync(Guid cardID, Member newMember)
     {
         try
         {
-            await _memberService.UpdateAsync(SSN, newMember);
+            await _memberService.UpdateAsync(cardID, newMember);
 
-            return Ok(new { Message = $"Successfully updated book with SSN={SSN}", Book = newMember });
+            return Ok(new { Message = $"Successfully updated member with card id {cardID}", Member = newMember });
         }
         catch (System.Exception)
         {

@@ -9,9 +9,9 @@ public interface IMemberService
 
     Task<Member> CreateStudentAsync(StudentDto studentDto);
 
-    Task<Member> GetAsync(string SSN);
+    Task<Member> GetAsync(Guid cardID);
 
-    Task DeleteAsync(string SSN);
+    Task DeleteAsync(Guid cardID);
 
-    Task UpdateAsync(string SSN, Member newMember);
+    Task UpdateAsync(Guid cardID, Member newMember);
 }

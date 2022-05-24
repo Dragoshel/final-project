@@ -8,9 +8,9 @@ public interface IMemberRepo
 
     Task<Member> CreateStudentAsync(StudentDto studentDto);
 
-    Task<Member> GetAsync(string ssn);
+    Task<Member> GetAsync(Guid cardID);
 
-    Task<int> DeleteAsync(string ssn);
+    Task<int> DeleteAsync(Guid cardID);
 
-    Task<int> UpdateAsync(string ssn, Member newMember);
+    Task<int> UpdateAsync(Guid cardID, Member newMember);
 }

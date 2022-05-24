@@ -12,6 +12,10 @@ services:
       "INITIAL CATALOG": "tempdb"
       "USER ID": "sa"
       "PASSWORD": "Pass1234"
+      # "DATA SOURCE": "ucnstudieserver.database.windows.net"
+      # "INITIAL CATALOG": "First_Semester_Project"
+      # "USER ID": "psd-csd-v22"
+      # "PASSWORD": "ZaD89xHPHtwiMcd"
       "ASPNETCORE_ENVIRONMENT": "Development"
   db:
     image: "mcr.microsoft.com/mssql/server"

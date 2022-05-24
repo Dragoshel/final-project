@@ -26,6 +26,7 @@ if (app.Environment.IsDevelopment())
     app.SeedDatabase("Data/SQL/tables.sql");
     app.SeedDatabase("Data/SQL/spCreateStudent.sql");
     app.SeedDatabase("Data/SQL/spCreateTeacher.sql");
+    app.SeedDatabase("Data/SQL/spCheckOverdueLoans.sql");
     app.UseSwagger();
     app.UseSwaggerUI();
 }

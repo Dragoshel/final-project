@@ -10,6 +10,7 @@ public class LoanRepo : ILoanRepo
     private readonly Engine _engine;
 
     public LoanRepo(Engine engine) => _engine = engine;
+
     public async Task<int> CreateAsync(int MemberCardID, int Barcode)
     {
         using (var con = _engine.MakeConnection())
@@ -21,5 +22,17 @@ public class LoanRepo : ILoanRepo
             return asd;
         }
         
+    }
+
+    public async Task ReturnBook(Guid barcode)
+    {
+        using (var con = _engine.MakeConnection())
+        {
+            con.Open();
+
+            const string SP_NAME = "[dbo].[ReturnBook]";
+
+            await con.ExecuteAsync(SP_NAME, new { Barcode = barcode }, commandType: CommandType.StoredProcedure);
+        }
     }
 }

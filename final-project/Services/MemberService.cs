@@ -21,9 +21,9 @@ public class MemberService : IMemberService
         _logger = logger;
     }
 
-    private async Task<Member> Check_If_Member_Exists(string ISBN)
+    private async Task<Member> Check_If_Member_Exists(Guid cardID)
     {
-        var foundBook = await _memberRepo.GetAsync(ISBN);
+        var foundBook = await _memberRepo.GetAsync(cardID);
 
         return foundBook;
     } 
@@ -48,35 +48,35 @@ public class MemberService : IMemberService
         return memberSsnResult;
     }
 
-    public async Task<Member> GetAsync(string SSN)
+    public async Task<Member> GetAsync(Guid cardID)
     {
-        var member = await Check_If_Member_Exists(SSN);
+        var member = await Check_If_Member_Exists(cardID);
 
         if (member is null)
-            throw new FinalProjectException($"The member with SSN={SSN} does not exist.");
+            throw new FinalProjectException($"The member with card id {cardID} does not exist.");
 
         return member;
     }
 
-    public async Task DeleteAsync(string SSN)
+    public async Task DeleteAsync(Guid cardID)
     {
-        if (await Check_If_Member_Exists(SSN) is null)
-            throw new FinalProjectException($"The member with SSN={SSN} does not exist.");
+        if (await Check_If_Member_Exists(cardID) is null)
+            throw new FinalProjectException($"The member with card id {cardID} does not exist.");
 
-        var result = await _memberRepo.DeleteAsync(SSN);
+        var result = await _memberRepo.DeleteAsync(cardID);
 
         if (result < 1)
-            throw new FinalProjectException($"Could not delete member with SSN={SSN}.");
+            throw new FinalProjectException($"Could not delete member with member id {cardID}.");
     }
 
-    public async Task UpdateAsync(string SSN, Member newMember)
+    public async Task UpdateAsync(Guid cardID, Member newMember)
     {
-        if (await Check_If_Member_Exists(SSN) is null)
-            throw new FinalProjectException($"The member with SSN={SSN} does not exist.");
+        if (await Check_If_Member_Exists(cardID) is null)
+            throw new FinalProjectException($"The member with card id {cardID} does not exist.");
 
-        var result = await _memberRepo.UpdateAsync(SSN, newMember);
+        var result = await _memberRepo.UpdateAsync(cardID, newMember);
 
         if (result < 1)
-            throw new FinalProjectException($"Could not update member with SSN={SSN}.");
+            throw new FinalProjectException($"Could not update member with card id {cardID}.");
     }
 }

@@ -12,6 +12,7 @@ public class LoanController : ControllerBase
     private readonly ILoanService _loanService;
 
     private readonly ILogger<ILoanService> _logger;
+
     public LoanController(ILoanService loanService, ILogger<ILoanService> logger)
     {
         _loanService = loanService;
@@ -23,11 +24,26 @@ public class LoanController : ControllerBase
     {
         try
         {
-            await _loanService.CreateAsync(loan.MemberCardID,loan.Barcode);
+            await _loanService.CreateAsync(loan.MemberCardID, loan.Barcode);
 
             _logger.LogInformation("Created loan");
 
             return Ok();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    [HttpPost("return-book/{barcode}")]
+    public async Task<ActionResult> ReturnBook(string barcode)
+    {
+        try
+        {
+            await _loanService.ReturnBook(Guid.Parse(barcode));
+
+            return Ok(new { Message = "Successfully returned book" });
         }
         catch (Exception)
         {

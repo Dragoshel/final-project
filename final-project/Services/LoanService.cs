@@ -25,4 +25,9 @@ public class LoanService : ILoanService
         if (result < 1)
             throw new FinalProjectException($"Could not create loan");
     }
+
+    public async Task ReturnBook(Guid barcode)
+    {
+        await _loanRepo.ReturnBook(barcode);
+    }
 }
