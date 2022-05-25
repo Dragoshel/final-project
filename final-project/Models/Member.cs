@@ -3,6 +3,7 @@ namespace FinalProject.Models;
 public class Member
 {
     public Guid CardID { get; set; }
+
     public string Ssn { get; set; }    
 
     public string FirstName { get; set; }

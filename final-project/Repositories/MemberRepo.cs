@@ -106,4 +106,19 @@ public class MemberRepo : IMemberRepo
             return count;
         }
     }
+
+    public async Task<IEnumerable<Member>> GetExpiredMemberCards()
+    {
+        using (var con = _engine.MakeConnection())
+        {
+            con.Open();
+
+            const string SP_NAME = "[dbo].[CheckExpiredMemberCards]";
+
+            var expiredMemberCards = await con.QueryAsync<Member>(SP_NAME,
+                commandType: CommandType.StoredProcedure);
+
+            return expiredMemberCards.AsEnumerable();
+        }
+    }
 }

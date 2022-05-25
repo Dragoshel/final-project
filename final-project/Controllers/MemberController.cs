@@ -95,4 +95,19 @@ public class MemberController : ControllerBase
             throw;
         }
     }
+
+    [HttpGet("check-expired-cards")]
+    public async Task<ActionResult<IEnumerable<Member>>> GetExpiredMemberCards()
+    {
+        try
+        {
+            var expiredMemberCards = await _memberService.GetExpiredMemberCards();
+
+            return Ok(expiredMemberCards); 
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
 }

@@ -14,4 +14,6 @@ public interface IMemberService
     Task DeleteAsync(Guid cardID);
 
     Task UpdateAsync(Guid cardID, Member newMember);
+
+    Task<IEnumerable<Member>> GetExpiredMemberCards();
 }

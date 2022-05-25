@@ -13,4 +13,6 @@ public interface IMemberRepo
     Task<int> DeleteAsync(Guid cardID);
 
     Task<int> UpdateAsync(Guid cardID, Member newMember);
+
+    Task<IEnumerable<Member>> GetExpiredMemberCards();
 }

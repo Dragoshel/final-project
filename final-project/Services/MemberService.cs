@@ -79,4 +79,9 @@ public class MemberService : IMemberService
         if (result < 1)
             throw new FinalProjectException($"Could not update member with card id {cardID}.");
     }
+
+    public async Task<IEnumerable<Member>> GetExpiredMemberCards()
+    {
+        return await _memberRepo.GetExpiredMemberCards();
+    }
 }
