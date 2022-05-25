@@ -6,45 +6,6 @@ using System.Data;
 
 namespace FinalProject.Repos;
 
-public class TeacherDto
-{
-    public string Ssn { get; set; }
-
-    public string FirstName { get; set; }
-
-    public string LastName { get; set; }
-
-    public string PhoneNum { get; set; }
-
-    public DateTime Expiration { get; set; }
-
-    public Guid CampusID { get; set; }
-}
-
-public class StudentDto
-{
-    public string Ssn { get; set; }
-
-    public string FirstName { get; set; }
-
-    public string LastName { get; set; }
-
-    public string PhoneNum { get; set; }
-
-    public DateTime Expiration { get; set; }
-
-
-    public string Country { get; set; }
-
-    public string City { get; set; }
-
-    public string AddressLine1 { get; set; }
-
-    public string AddressLine2 { get; set; }
-
-    public string PostCode { get; set; }
-}
-
 public class MemberRepo : IMemberRepo
 {
     private readonly Engine _engine;
@@ -68,7 +29,7 @@ public class MemberRepo : IMemberRepo
         return member;
     }
 
-    public async Task<Member> CreateTeacherAsync(TeacherDto teacherDto)
+    public async Task<Member> CreateTeacherAsync(CreateTeacherDto teacherDto)
     {
         using (var con = _engine.MakeConnection())
         {
@@ -82,7 +43,7 @@ public class MemberRepo : IMemberRepo
         }
     }
 
-    public async Task<Member> CreateStudentAsync(StudentDto studentDto)
+    public async Task<Member> CreateStudentAsync(CreateStudentDto studentDto)
     {
         using (var con = _engine.MakeConnection())
         {

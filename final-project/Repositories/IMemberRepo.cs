@@ -4,9 +4,9 @@ namespace FinalProject.Repos;
 
 public interface IMemberRepo
 {
-    Task<Member> CreateTeacherAsync(TeacherDto teacherDto);
+    Task<Member> CreateTeacherAsync(CreateTeacherDto createTeacherDto);
 
-    Task<Member> CreateStudentAsync(StudentDto studentDto);
+    Task<Member> CreateStudentAsync(CreateStudentDto createStudentDto);
 
     Task<Member> GetAsync(Guid cardID);
 

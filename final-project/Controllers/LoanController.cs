@@ -3,8 +3,8 @@
 using FinalProject.Services;
 using FinalProject.Models;
 
-
 namespace FinalProject.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class LoanController : ControllerBase
@@ -36,14 +36,44 @@ public class LoanController : ControllerBase
         }
     }
 
-    [HttpPost("return-book/{barcode}")]
-    public async Task<ActionResult> ReturnBook(string barcode)
+    [HttpPost("return-book/{bookCopyBarcode}")]
+    public async Task<ActionResult> ReturnBook(Guid bookCopyBarcode)
     {
         try
         {
-            await _loanService.ReturnBook(Guid.Parse(barcode));
+            await _loanService.ReturnBook(bookCopyBarcode);
 
-            return Ok(new { Message = "Successfully returned book" });
+            return Ok(new { Message = $"Successfully returned book with barcode {bookCopyBarcode}" });
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    [HttpGet("check-overdue-loans")]
+    public async Task<ActionResult<IEnumerable<OverdueNoticeDto>>> CheckOverdueLoans()
+    {
+        try
+        {
+            var overdueLoans = await _loanService.CheckOverdueLoans();
+
+            return Ok(overdueLoans);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    [HttpPost("loan-from-library")]
+    public async Task<ActionResult<InterLibrary_Loan>> LoanFromLibrary(LoanFromLibraryDto loanFromLibraryDto)
+    {
+        try
+        { 
+            var interLibrary_Loan = await _loanService.LoanFromLibrary(loanFromLibraryDto);
+
+            return Ok(interLibrary_Loan);
         }
         catch (Exception)
         {

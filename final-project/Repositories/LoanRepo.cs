@@ -17,14 +17,14 @@ public class LoanRepo : ILoanRepo
         {
             con.Open();
 
-            var asd = await con.ExecuteAsync("CreateLoan", new {MemberCardID, Barcode}, commandType: CommandType.StoredProcedure);
+            var asd = await con.ExecuteAsync("CreateLoan", new { MemberCardID, Barcode }, commandType: CommandType.StoredProcedure);
 
             return asd;
         }
-        
+
     }
 
-    public async Task ReturnBook(Guid barcode)
+    public async Task ReturnBook(Guid bookCopyBarcode)
     {
         using (var con = _engine.MakeConnection())
         {
@@ -32,7 +32,38 @@ public class LoanRepo : ILoanRepo
 
             const string SP_NAME = "[dbo].[ReturnBook]";
 
-            await con.ExecuteAsync(SP_NAME, new { Barcode = barcode }, commandType: CommandType.StoredProcedure);
+            await con.ExecuteAsync(SP_NAME, new { bookCopyBarcode = bookCopyBarcode },
+                commandType: CommandType.StoredProcedure);
+        }
+    }
+
+    public async Task<IEnumerable<OverdueNoticeDto>> CheckOverdueLoans()
+    {
+        using (var con = _engine.MakeConnection())
+        {
+            con.Open();
+
+            const string SP_NAME = "[dbo].[CheckOverdueLoans]";
+            
+            var overdueNoticeDto = await con.QueryAsync<OverdueNoticeDto>(SP_NAME,
+                commandType: CommandType.StoredProcedure);
+
+            return overdueNoticeDto.AsEnumerable();
+        }
+    }
+
+    public async Task<InterLibrary_Loan> LoanFromLibrary(LoanFromLibraryDto loanFromLibraryDto)
+    {
+        using (var con = _engine.MakeConnection())
+        {
+            con.Open();
+
+            const string SP_NAME = "[dbo].[LoanFromLibrary]";
+
+            var interLibraryLoan = await con.QueryAsync<InterLibrary_Loan>(SP_NAME, loanFromLibraryDto,
+                commandType: CommandType.StoredProcedure);
+
+            return interLibraryLoan.SingleOrDefault(); 
         }
     }
 }

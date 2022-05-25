@@ -28,9 +28,9 @@ public class MemberService : IMemberService
         return foundBook;
     } 
 
-    public async Task<Member> CreateTeacherAsync(TeacherDto teacherDto)
+    public async Task<Member> CreateTeacherAsync(CreateTeacherDto createTeacherDto)
     {
-        var memberSsnResult = await _memberRepo.CreateTeacherAsync(teacherDto);
+        var memberSsnResult = await _memberRepo.CreateTeacherAsync(createTeacherDto);
 
         if (memberSsnResult is null)
             throw new FinalProjectException("Creating student member failed.");
@@ -38,9 +38,9 @@ public class MemberService : IMemberService
         return memberSsnResult;
     }
 
-    public async Task<Member> CreateStudentAsync(StudentDto studentDto)
+    public async Task<Member> CreateStudentAsync(CreateStudentDto createStudentDto)
     {
-        var memberSsnResult = await _memberRepo.CreateStudentAsync(studentDto);
+        var memberSsnResult = await _memberRepo.CreateStudentAsync(createStudentDto);
 
         if (memberSsnResult is null)
             throw new FinalProjectException("Creating student member failed.");
@@ -75,7 +75,7 @@ public class MemberService : IMemberService
             throw new FinalProjectException($"The member with card id {cardID} does not exist.");
 
         var result = await _memberRepo.UpdateAsync(cardID, newMember);
-
+        
         if (result < 1)
             throw new FinalProjectException($"Could not update member with card id {cardID}.");
     }

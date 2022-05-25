@@ -5,7 +5,7 @@ CREATE PROCEDURE [dbo].[CreateTeacher]
     @phoneNum varchar(20),
     @expiration datetime,
 
-    @campusID char(36)
+    @campusID uniqueidentifier
 AS
 BEGIN
     -- prevent extra result set from SELECT statements
@@ -30,7 +30,7 @@ BEGIN
 
         INSERT INTO Member
         (ssn, firstName, lastName, phoNenum, expiration, memberTypeID, addressID)
-        OUTPUT inserted.*
+        OUTPUT INSERTED.*
         VALUES (@ssn, @firstName, @lastName, @phoNenum, @expiration, @memberTypeID, @addressID);
         
     END TRY

@@ -30,4 +30,14 @@ public class LoanService : ILoanService
     {
         await _loanRepo.ReturnBook(barcode);
     }
+
+    public async Task<IEnumerable<OverdueNoticeDto>> CheckOverdueLoans()
+    {
+        return await _loanRepo.CheckOverdueLoans();
+    }
+
+    public async Task<InterLibrary_Loan> LoanFromLibrary(LoanFromLibraryDto loanFromLibraryDto)
+    {
+        return await _loanRepo.LoanFromLibrary(loanFromLibraryDto);
+    }
 }

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
 using FinalProject.Services;
-using FinalProject.Repos;
 using FinalProject.Models;
 
 namespace FinalProject.Controllers;
@@ -21,11 +20,11 @@ public class MemberController : ControllerBase
     }
 
     [HttpPost("create-student")]
-    public async Task<ActionResult<Member>> CreateStudentAsync(StudentDto studentDto)
+    public async Task<ActionResult<Member>> CreateStudentAsync(CreateStudentDto createStudentDto)
     {
         try
         {
-            var member = await _memberService.CreateStudentAsync(studentDto);
+            var member = await _memberService.CreateStudentAsync(createStudentDto);
 
             return Ok(member);
         }
@@ -37,11 +36,11 @@ public class MemberController : ControllerBase
     }
 
     [HttpPost("create-teacher")]
-    public async Task<ActionResult<Member>> CreateTeacherAsync(TeacherDto teacherDto)
+    public async Task<ActionResult<Member>> CreateTeacherAsync(CreateTeacherDto createTeacherDto)
     {
         try
         {
-            var member = await _memberService.CreateTeacherAsync(teacherDto);
+            var member = await _memberService.CreateTeacherAsync(createTeacherDto);
 
             return Ok(member);
         }
