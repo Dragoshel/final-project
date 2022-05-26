@@ -33,7 +33,7 @@ public class MemberService : IMemberService
         var memberSsnResult = await _memberRepo.CreateTeacherAsync(createTeacherDto);
 
         if (memberSsnResult is null)
-            throw new FinalProjectException("Creating student member failed.");
+            throw new FinalProjectException("Creating teacher member failed.");
         
         return memberSsnResult;
     }
@@ -58,7 +58,7 @@ public class MemberService : IMemberService
         return member;
     }
 
-    public async Task DeleteAsync(Guid cardID)
+    public async Task<int> DeleteAsync(Guid cardID)
     {
         if (await Check_If_Member_Exists(cardID) is null)
             throw new FinalProjectException($"The member with card id {cardID} does not exist.");
@@ -67,6 +67,8 @@ public class MemberService : IMemberService
 
         if (result < 1)
             throw new FinalProjectException($"Could not delete member with member id {cardID}.");
+
+        return result;
     }
 
     public async Task UpdateAsync(Guid cardID, Member newMember)

@@ -11,7 +11,7 @@ public interface IMemberService
 
     Task<Member> GetAsync(Guid cardID);
 
-    Task DeleteAsync(Guid cardID);
+    Task<int> DeleteAsync(Guid cardID);
 
     Task UpdateAsync(Guid cardID, Member newMember);
 
