@@ -23,9 +23,9 @@ public class MemberService : IMemberService
 
     private async Task<Member> Check_If_Member_Exists(Guid cardID)
     {
-        var foundBook = await _memberRepo.GetAsync(cardID);
+        var bookResult = await _memberRepo.GetAsync(cardID);
 
-        return foundBook;
+        return bookResult;
     } 
 
     public async Task<Member> CreateTeacherAsync(CreateTeacherDto createTeacherDto)
@@ -40,22 +40,22 @@ public class MemberService : IMemberService
 
     public async Task<Member> CreateStudentAsync(CreateStudentDto createStudentDto)
     {
-        var memberSsnResult = await _memberRepo.CreateStudentAsync(createStudentDto);
+        var memberResult = await _memberRepo.CreateStudentAsync(createStudentDto);
 
-        if (memberSsnResult is null)
+        if (memberResult is null)
             throw new FinalProjectException("Creating student member failed.");
         
-        return memberSsnResult;
+        return memberResult;
     }
 
     public async Task<Member> GetAsync(Guid cardID)
     {
-        var member = await Check_If_Member_Exists(cardID);
+        var memberResult = await Check_If_Member_Exists(cardID);
 
-        if (member is null)
+        if (memberResult is null)
             throw new FinalProjectException($"The member with card id {cardID} does not exist.");
 
-        return member;
+        return memberResult;
     }
 
     public async Task DeleteAsync(Guid cardID)

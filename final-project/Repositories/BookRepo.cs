@@ -11,19 +11,20 @@ public class BookRepo : IBookRepo
 
     public BookRepo(Engine engine) => _engine = engine;
 
-    public async Task<int> CreateAsync(Book newBook)
+    public async Task<Book> CreateAsync(Book book)
     {
         var sql = @"INSERT INTO Book
                     (isbn, title, edition, subject, description, isLendable, inStock)
+                    OUTPUT INSERTED.*
                     VALUES (@ISBN, @Title, @Edition, @Subject, @Description, @IsLendable, @InStock)";
 
         using (var con = _engine.MakeConnection())
         {
             con.Open();
 
-            var count = await con.ExecuteAsync(sql, newBook);
+            var bookResult = await con.QueryAsync<Book>(sql, book);
 
-            return count;
+            return bookResult.SingleOrDefault();
         }
     }
 
@@ -39,7 +40,7 @@ public class BookRepo : IBookRepo
 
             var bookResult = await con.QueryAsync<Book>(sql, new { ISBN = ISBN });
 
-            return bookResult.Count() < 1 ? null : bookResult.First();
+            return bookResult.SingleOrDefault();
         }
     }
 

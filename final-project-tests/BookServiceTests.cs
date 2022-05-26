@@ -58,7 +58,6 @@ public class BookServiceTests : IClassFixture<DatabaseFixture>
         var bookMock = new Book { ISBN = ISBN };
         _bookRepoMock.Setup(x => x.GetAsync(ISBN))
             .ReturnsAsync(bookMock);
-
         // Act
         var book = await _sut.GetAsync(ISBN);
 
@@ -78,18 +77,41 @@ public class BookServiceTests : IClassFixture<DatabaseFixture>
 
         // Assert
         var caughtException = await Assert.ThrowsAsync<FinalProjectException>(action);
-        Assert.Equal("The book with ISBN= does not exist.", caughtException.Message);
+        Assert.Equal("The book with ISBN  does not exist.", caughtException.Message);
     }
 
     [Fact]
     public async Task DeleteBookByISBN_ShouldDelete_WhenBookExists()
     {
         // Arrange
-        _bookRepoMock.Setup(x => x.DeleteAsync(It.IsAny<string>))
+        var ISBN = "978-1119540922";
+        var bookMock = new Book { ISBN = ISBN };
+
+        _bookRepoMock.Setup(x => x.GetAsync(ISBN))
+            .ReturnsAsync(bookMock);
+        _bookRepoMock.Setup(x => x.DeleteAsync(ISBN))
+            .ReturnsAsync(1);
+        // Act
+        var result = await _sut.DeleteAsync(ISBN);
+
+        // Assert
+        Assert.Equal(result, 1);
+    }
+
+    [Fact]
+    public async Task UpdateBook_ShouldUpdateBook_WhenBookIsValid()
+    {
+        // Arrange
+        var ISBN = "978-1119540922";
+        var bookMock = new Book { ISBN = ISBN };
+
+        _bookRepoMock.Setup(x => x.GetAsync(ISBN))
+            .ReturnsAsync(bookMock);
+        _bookRepoMock.Setup(x => x.UpdateAsync(ISBN, bookMock))
             .ReturnsAsync(1);
 
         // Act
-        var result = await _sut.DeleteAsync(string.Empty);
+        var result = await _sut.UpdateAsync(ISBN, bookMock);
 
         // Assert
         Assert.Equal(result, 1);

@@ -2,8 +2,8 @@
 CREATE PROCEDURE [dbo].[CreateLoan]
 (
     -- Add the parameters for the stored procedure here
-    @MemberCardID char(36) = NULL,  
-    @Barcode char(36) = NULL
+    @memberCardID uniqueidentifier
+    @barcode uniqueidentifier
 )
 AS
 BEGIN

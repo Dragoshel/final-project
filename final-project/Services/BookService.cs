@@ -20,50 +20,47 @@ public class BookService : IBookService
         _logger = logger;
     }
 
-    private async Task<Book> Check_If_Book_Exists(string ISBN)
+    public async Task<Book> CreateAsync(Book book)
     {
-        var foundBook = await _bookRepo.GetAsync(ISBN);
+        var bookResult = await _bookRepo.CreateAsync(book);
 
-        return foundBook;
-    }
-
-    public async Task CreateAsync(Book newBook)
-    {
-        var result = await _bookRepo.CreateAsync(newBook);
-
-        if (result < 1)
-            throw new FinalProjectException($"Could not create new book");
+        if (bookResult is null)
+            throw new FinalProjectException("Creating book failed.");
+        
+        return bookResult;
     }
 
     public async Task<Book> GetAsync(string ISBN)
     {
-        var book = await Check_If_Book_Exists(ISBN);
+        var book = await _bookRepo.GetAsync(ISBN);
 
         if (book is null)
-            throw new FinalProjectException($"The book with ISBN={ISBN} does not exist.");
+            throw new FinalProjectException($"The book with ISBN {ISBN} does not exist.");
 
         return book;
     }
 
-    public async Task DeleteAsync(string ISBN)
+    public async Task<int> DeleteAsync(string ISBN)
     {
-        if (await Check_If_Book_Exists(ISBN) is null)
-            throw new FinalProjectException($"The book with ISBN={ISBN} does not exist.");
-
+        await GetAsync(ISBN);
+        
         var result = await _bookRepo.DeleteAsync(ISBN);
 
         if (result < 1)
-            throw new FinalProjectException($"Could not delete book with ISBN={ISBN}.");
+            throw new FinalProjectException($"Could not delete book with ISBN {ISBN}.");
+
+        return result;
     }
 
-    public async Task UpdateAsync(string ISBN, Book newBook)
+    public async Task<int> UpdateAsync(string ISBN, Book newBook)
     {
-        if (await Check_If_Book_Exists(ISBN) is null)
-            throw new FinalProjectException($"The book with ISBN={ISBN} does not exist.");
+        await GetAsync(ISBN);
 
         var result = await _bookRepo.UpdateAsync(ISBN, newBook);
 
         if (result < 1)
             throw new FinalProjectException($"Could not update book with ISBN={ISBN}.");
+        
+        return result;
     }
 }

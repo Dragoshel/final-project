@@ -4,11 +4,11 @@ namespace FinalProject.Repos;
 
 public interface IBookRepo
 {
-    Task<int> CreateAsync(Book newBook);
+    Task<Book> CreateAsync(Book book);
 
     Task<Book> GetAsync(string ISBN);
 
     Task<int> DeleteAsync(string ISBN);
 
-    Task<int> UpdateAsync(string ISBN, Book newBook);
+    Task<int> UpdateAsync(string ISBN, Book book);
 }
