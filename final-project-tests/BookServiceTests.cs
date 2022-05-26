@@ -6,71 +6,92 @@ using FinalProject.Models;
 using FinalProject.Services;
 using FinalProject.Repos;
 
-namespace FinalProjectTests
+namespace FinalProjectTests;
+
+public class BookServiceTests : IClassFixture<DatabaseFixture>
 {
-    public class BookServiceTests : IClassFixture<DatabaseFixture>
+    private readonly BookService _sut;
+
+    private readonly Mock<IBookRepo> _bookRepoMock = new Mock<IBookRepo>();
+
+    private readonly Mock<ILogger<IBookService>> _loggerMock = new Mock<ILogger<IBookService>>();
+
+    private readonly DatabaseFixture _fixture;
+
+    public BookServiceTests(DatabaseFixture fixture)
     {
-        private readonly BookService _sut;
+        _fixture = fixture;
 
-        private readonly Mock<IBookRepo> _bookRepoMock = new Mock<IBookRepo>();
+        _sut = new BookService(_fixture.engine, _bookRepoMock.Object, _loggerMock.Object);
+    }
 
-        private readonly Mock<ILogger<IBookService>> _loggerMock = new Mock<ILogger<IBookService>>();
-
-        private readonly DatabaseFixture _fixture;
-
-        public BookServiceTests(DatabaseFixture fixture)
+    [Fact]
+    public async Task CreateBook_ShouldCreateBook_WhenBookIsValid()
+    {
+        // Arrange
+        var bookMock = new Book()
         {
-            _fixture = fixture;
+            ISBN = "",
+            Title = "",
+            Edition = "",
+            Subject = "",
+            Description = "",
+            IsLendable = true,
+            InStock = true
+        };
 
-            _sut = new BookService(_fixture.engine, _bookRepoMock.Object, _loggerMock.Object);
-        }
+        _bookRepoMock.Setup(x => x.CreateAsync(It.IsAny<Book>()))
+            .ReturnsAsync(bookMock);
 
+        // Act
+        var result = await _sut.CreateAsync(bookMock);
 
-        [Fact]
-        public async Task GetBookByISBN_ShouldReturnBook_WhenBookExists()
-        {
-            // Arrange
-            var ISBN = "978-1119540922";
-            var bookMock = new Book { ISBN = ISBN };
-            _bookRepoMock
-                .Setup(x => x.GetAsync(ISBN))
-                .ReturnsAsync(bookMock);
+        // Assert
+        Assert.Equal(result, bookMock);
+    }
 
-            // Act
-            var book = await _sut.GetAsync(ISBN);
+    [Fact]
+    public async Task GetBookByISBN_ShouldReturnBook_WhenBookExists()
+    {
+        // Arrange
+        var ISBN = "978-1119540922";
+        var bookMock = new Book { ISBN = ISBN };
+        _bookRepoMock.Setup(x => x.GetAsync(ISBN))
+            .ReturnsAsync(bookMock);
 
-            // Assert
-            Assert.Equal(ISBN, book.ISBN);
-        }
+        // Act
+        var book = await _sut.GetAsync(ISBN);
 
-        [Fact(Skip = "skipped")]
-        public async Task GetBookByISBN_ShouldThrow_WhenBookDoesNotExist()
-        {
-            _bookRepoMock.Setup(x => x.GetAsync(It.IsAny<string>()))
-                .ReturnsAsync(() => null);
+        // Assert
+        Assert.Equal(ISBN, book.ISBN);
+    }
 
-            var book = await _sut.GetAsync(string.Empty);
-        }
+    [Fact]
+    public async Task GetBookByISBN_ShouldThrow_WhenBookDoesNotExist()
+    {
+        // Arrange
+        _bookRepoMock.Setup(x => x.GetAsync(It.IsAny<string>()))
+            .ReturnsAsync(() => null);
 
-        // [Fact]
-        // public async Task CreateBook_ShouldCreate_WhenValidAttributes()
-        // {
-        //     var book = new Book
-        //     {
-        //         ISBN = "123-123456789",
-        //         Title = "Title",
-        //         Subject = "Subject",
-        //         Description = "Description",
-        //         Edition = "Edition",
-        //         InStock = true,
-        //         IsLendable = true
-        //     };
-        //     _bookRepoMock.Setup(x => x.CreateAsync(It.IsAny<Book>()))
-        //         .ReturnsAsync(1);
+        // Act
+        var action = async () => await _sut.GetAsync(string.Empty);
 
-        //     await _sut.CreateAsync(book);
+        // Assert
+        var caughtException = await Assert.ThrowsAsync<FinalProjectException>(action);
+        Assert.Equal("The book with ISBN= does not exist.", caughtException.Message);
+    }
 
-        //     _loggerMock.VerifyInfoWasCalled("Successfully created.");
-        // }
+    [Fact]
+    public async Task DeleteBookByISBN_ShouldDelete_WhenBookExists()
+    {
+        // Arrange
+        _bookRepoMock.Setup(x => x.DeleteAsync(It.IsAny<string>))
+            .ReturnsAsync(1);
+
+        // Act
+        var result = await _sut.DeleteAsync(string.Empty);
+
+        // Assert
+        Assert.Equal(result, 1);
     }
 }

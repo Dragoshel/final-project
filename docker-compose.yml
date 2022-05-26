@@ -1,26 +1,26 @@
 services:
-  api:
-    build: .
+  app:
+    build:
+      context: .
+      target: app
     volumes:
-      - .:/app
+      - ./final-project:/app/final-project
     ports:
       - "5001:5001"
     depends_on:
       - db
     environment:
-      "DATA SOURCE": "db"
-      "INITIAL CATALOG": "tempdb"
-      "USER ID": "sa"
-      "PASSWORD": "Pass1234"
       # "DATA SOURCE": "ucnstudieserver.database.windows.net"
       # "INITIAL CATALOG": "First_Semester_Project"
       # "USER ID": "psd-csd-v22"
       # "PASSWORD": "ZaD89xHPHtwiMcd"
+      "DATA SOURCE": "db"
+      "INITIAL CATALOG": "tempdb"
+      "USER ID": "sa"
+      "PASSWORD": "Pass1234"
       "ASPNETCORE_ENVIRONMENT": "Development"
   db:
     image: "mcr.microsoft.com/mssql/server"
-    ports:
-      - "1433:1433"
     environment:
       SA_PASSWORD: "Pass1234"
       ACCEPT_EULA: "Y"

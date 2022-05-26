@@ -29,6 +29,7 @@ if (app.Environment.IsDevelopment())
     app.SeedDatabase("Data/SQL/spCheckOverdueLoans.sql");
     app.SeedDatabase("Data/SQL/spReturnBook.sql");
     app.SeedDatabase("Data/SQL/spLoanFromLibrary.sql");
+    app.SeedDatabase("Data/SQL/spCreateLoan.sql");
     app.SeedDatabase("Data/SQL/spCheckExpiredMemberCards.sql");
     app.UseSwagger();
     app.UseSwaggerUI();

@@ -1,8 +1,8 @@
 services:
-  api:
-    build: .
-    volumes:
-      - .:/app
+  app:
+    build:
+      context: .
+      target: test
     depends_on:
       - db
   db:

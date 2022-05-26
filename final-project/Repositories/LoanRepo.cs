@@ -17,7 +17,10 @@ public class LoanRepo : ILoanRepo
         {
             con.Open();
 
-            var asd = await con.ExecuteAsync("CreateLoan", new { MemberCardID, Barcode }, commandType: CommandType.StoredProcedure);
+            const string SP_NAME = "[dbo].[CreateLoan]";
+
+            var asd = await con.ExecuteAsync(SP_NAME, new { MemberCardID = MemberCardID, Barcode = Barcode },
+                commandType: CommandType.StoredProcedure);
 
             return asd;
         }
