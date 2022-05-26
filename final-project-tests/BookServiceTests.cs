@@ -21,7 +21,6 @@ public class BookServiceTests : IClassFixture<DatabaseFixture>
     public BookServiceTests(DatabaseFixture fixture)
     {
         _fixture = fixture;
-
         _sut = new BookService(_fixture.engine, _bookRepoMock.Object, _loggerMock.Object);
     }
 
@@ -29,18 +28,10 @@ public class BookServiceTests : IClassFixture<DatabaseFixture>
     public async Task CreateBook_ShouldCreateBook_WhenBookIsValid()
     {
         // Arrange
-        var bookMock = new Book()
-        {
-            ISBN = "",
-            Title = "",
-            Edition = "",
-            Subject = "",
-            Description = "",
-            IsLendable = true,
-            InStock = true
-        };
+        var ISBN = "978-1119540922";
+        var bookMock = new Book { ISBN = ISBN };
 
-        _bookRepoMock.Setup(x => x.CreateAsync(It.IsAny<Book>()))
+        _bookRepoMock.Setup(x => x.CreateAsync(bookMock))
             .ReturnsAsync(bookMock);
 
         // Act
@@ -56,6 +47,7 @@ public class BookServiceTests : IClassFixture<DatabaseFixture>
         // Arrange
         var ISBN = "978-1119540922";
         var bookMock = new Book { ISBN = ISBN };
+
         _bookRepoMock.Setup(x => x.GetAsync(ISBN))
             .ReturnsAsync(bookMock);
         // Act
@@ -87,8 +79,6 @@ public class BookServiceTests : IClassFixture<DatabaseFixture>
         var ISBN = "978-1119540922";
         var bookMock = new Book { ISBN = ISBN };
 
-        _bookRepoMock.Setup(x => x.GetAsync(ISBN))
-            .ReturnsAsync(bookMock);
         _bookRepoMock.Setup(x => x.DeleteAsync(ISBN))
             .ReturnsAsync(1);
         // Act
@@ -105,8 +95,6 @@ public class BookServiceTests : IClassFixture<DatabaseFixture>
         var ISBN = "978-1119540922";
         var bookMock = new Book { ISBN = ISBN };
 
-        _bookRepoMock.Setup(x => x.GetAsync(ISBN))
-            .ReturnsAsync(bookMock);
         _bookRepoMock.Setup(x => x.UpdateAsync(ISBN, bookMock))
             .ReturnsAsync(1);
 

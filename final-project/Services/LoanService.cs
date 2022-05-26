@@ -18,12 +18,14 @@ public class LoanService : ILoanService
         _loanRepo = loanRepo;
         _logger = logger;
     }
-    public async Task CreateAsync(int MemberCardID, int Barcode)
+    public async Task<Loan> CreateAsync(CreateLoanDto createLoanDto)
     {
-        var result = await _loanRepo.CreateAsync(MemberCardID,Barcode);
+        var loanResult = await _loanRepo.CreateAsync(createLoanDto);
 
-        if (result < 1)
-            throw new FinalProjectException($"Could not create loan");
+        if (loanResult is null)
+            throw new FinalProjectException($"Could not create loan.");
+        
+        return loanResult;
     }
 
     public async Task ReturnBook(Guid barcode)

@@ -42,8 +42,6 @@ public class BookService : IBookService
 
     public async Task<int> DeleteAsync(string ISBN)
     {
-        await GetAsync(ISBN);
-        
         var result = await _bookRepo.DeleteAsync(ISBN);
 
         if (result < 1)
@@ -54,8 +52,6 @@ public class BookService : IBookService
 
     public async Task<int> UpdateAsync(string ISBN, Book newBook)
     {
-        await GetAsync(ISBN);
-
         var result = await _bookRepo.UpdateAsync(ISBN, newBook);
 
         if (result < 1)

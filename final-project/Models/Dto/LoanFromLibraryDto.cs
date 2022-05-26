@@ -4,9 +4,9 @@ public class LoanFromLibraryDto
 {
     public Guid LibraryID { get; set; }
 
-    public Guid bookCopyBarcode { get; set; }
+    public Guid BookCopyBarcode { get; set; }
 
-    public DateTime dueDate { get; set; }
+    public DateTime DueDate { get; set; }
 
-    public bool direction { get; set; }
+    public bool Direction { get; set; }
 }

@@ -4,7 +4,7 @@ namespace FinalProject.Services;
 
 public interface ILoanService
 {
-    Task CreateAsync(int MemberCardID, int Barcode);
+    Task<Loan> CreateAsync(CreateLoanDto createLoanDto);
 
     Task ReturnBook(Guid barcode);
 

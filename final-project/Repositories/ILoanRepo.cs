@@ -4,7 +4,7 @@ namespace FinalProject.Repos;
 
 public interface ILoanRepo
 {
-    Task<int> CreateAsync(int MemberCardID, int Barcode);
+    Task<Loan> CreateAsync(CreateLoanDto createLoanDto);
 
     Task ReturnBook(Guid barcode);
 

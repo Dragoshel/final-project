@@ -20,15 +20,15 @@ public class LoanController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<Book>> CreateAsync(LoanDTO loan)
+    public async Task<ActionResult<Loan>> CreateAsync(CreateLoanDto createLoanDto)
     {
         try
         {
-            await _loanService.CreateAsync(loan.MemberCardID, loan.Barcode);
+            var bookResult = await _loanService.CreateAsync(createLoanDto);
 
             _logger.LogInformation("Created loan");
 
-            return Ok();
+            return Ok(bookResult);
         }
         catch (Exception)
         {
@@ -80,11 +80,4 @@ public class LoanController : ControllerBase
             throw;
         }
     }
-}
-
-public class LoanDTO
-{
-    public int MemberCardID { get; set; }
-
-    public int Barcode { get; set; }
 }

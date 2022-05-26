@@ -11,7 +11,7 @@ public class LoanRepo : ILoanRepo
 
     public LoanRepo(Engine engine) => _engine = engine;
 
-    public async Task<int> CreateAsync(int MemberCardID, int Barcode)
+    public async Task<Loan> CreateAsync(CreateLoanDto createLoanDto)
     {
         using (var con = _engine.MakeConnection())
         {
@@ -19,12 +19,11 @@ public class LoanRepo : ILoanRepo
 
             const string SP_NAME = "[dbo].[CreateLoan]";
 
-            var asd = await con.ExecuteAsync(SP_NAME, new { MemberCardID = MemberCardID, Barcode = Barcode },
+            var loanResult = await con.QueryAsync<Loan>(SP_NAME, createLoanDto,
                 commandType: CommandType.StoredProcedure);
 
-            return asd;
+            return loanResult.SingleOrDefault();
         }
-
     }
 
     public async Task ReturnBook(Guid bookCopyBarcode)
@@ -47,7 +46,7 @@ public class LoanRepo : ILoanRepo
             con.Open();
 
             const string SP_NAME = "[dbo].[CheckOverdueLoans]";
-            
+
             var overdueNoticeDto = await con.QueryAsync<OverdueNoticeDto>(SP_NAME,
                 commandType: CommandType.StoredProcedure);
 
@@ -66,7 +65,7 @@ public class LoanRepo : ILoanRepo
             var interLibraryLoan = await con.QueryAsync<InterLibrary_Loan>(SP_NAME, loanFromLibraryDto,
                 commandType: CommandType.StoredProcedure);
 
-            return interLibraryLoan.SingleOrDefault(); 
+            return interLibraryLoan.SingleOrDefault();
         }
     }
 }

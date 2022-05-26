@@ -21,13 +21,6 @@ public class MemberService : IMemberService
         _logger = logger;
     }
 
-    private async Task<Member> Check_If_Member_Exists(Guid cardID)
-    {
-        var bookResult = await _memberRepo.GetAsync(cardID);
-
-        return bookResult;
-    } 
-
     public async Task<Member> CreateTeacherAsync(CreateTeacherDto createTeacherDto)
     {
         var memberSsnResult = await _memberRepo.CreateTeacherAsync(createTeacherDto);
@@ -50,36 +43,17 @@ public class MemberService : IMemberService
 
     public async Task<Member> GetAsync(Guid cardID)
     {
-        var memberResult = await Check_If_Member_Exists(cardID);
-
-        if (memberResult is null)
-            throw new FinalProjectException($"The member with card id {cardID} does not exist.");
-
-        return memberResult;
+        return await _memberRepo.GetAsync(cardID);
     }
 
     public async Task<int> DeleteAsync(Guid cardID)
     {
-        if (await Check_If_Member_Exists(cardID) is null)
-            throw new FinalProjectException($"The member with card id {cardID} does not exist.");
-
-        var result = await _memberRepo.DeleteAsync(cardID);
-
-        if (result < 1)
-            throw new FinalProjectException($"Could not delete member with member id {cardID}.");
-
-        return result;
+        return await _memberRepo.DeleteAsync(cardID);
     }
 
     public async Task UpdateAsync(Guid cardID, Member newMember)
     {
-        if (await Check_If_Member_Exists(cardID) is null)
-            throw new FinalProjectException($"The member with card id {cardID} does not exist.");
-
-        var result = await _memberRepo.UpdateAsync(cardID, newMember);
-        
-        if (result < 1)
-            throw new FinalProjectException($"Could not update member with card id {cardID}.");
+        await _memberRepo.UpdateAsync(cardID, newMember);
     }
 
     public async Task<IEnumerable<Member>> GetExpiredMemberCards()

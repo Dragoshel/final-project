@@ -145,7 +145,7 @@ public class MemberServiceTests : IClassFixture<DatabaseFixture>
         var result = await _sut.DeleteAsync(cardID);
 
         // Assert
-        Assert.Equal(1, result);
+        Assert.Equal(result, 1);
     }
 
     [Fact]
