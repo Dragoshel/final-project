@@ -61,15 +61,16 @@ public class BookServiceTests : IClassFixture<DatabaseFixture>
     public async Task GetBookByISBN_ShouldThrow_WhenBookDoesNotExist()
     {
         // Arrange
-        _bookRepoMock.Setup(x => x.GetAsync(It.IsAny<string>()))
+        var ISBN = "978-1119540922";
+        _bookRepoMock.Setup(x => x.GetAsync(ISBN))
             .ReturnsAsync(() => null);
 
         // Act
-        var action = async () => await _sut.GetAsync(string.Empty);
+        var action = async () => await _sut.GetAsync(ISBN);
 
         // Assert
         var caughtException = await Assert.ThrowsAsync<FinalProjectException>(action);
-        Assert.Equal("The book with ISBN  does not exist.", caughtException.Message);
+        Assert.Equal($"The book with ISBN {ISBN} does not exist.", caughtException.Message);
     }
 
     [Fact]

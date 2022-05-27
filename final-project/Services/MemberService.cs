@@ -43,11 +43,18 @@ public class MemberService : IMemberService
 
     public async Task<Member> GetAsync(Guid cardID)
     {
-        return await _memberRepo.GetAsync(cardID);
+        var memberResult = await _memberRepo.GetAsync(cardID);
+
+        if (memberResult is null)
+            throw new FinalProjectException($"The member with card id {cardID} does not exist.");
+        
+        return memberResult;
     }
 
     public async Task<int> DeleteAsync(Guid cardID)
     {
+        await GetAsync(cardID);
+
         return await _memberRepo.DeleteAsync(cardID);
     }
 

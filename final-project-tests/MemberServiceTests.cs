@@ -68,37 +68,37 @@ public class MemberServiceTests : IClassFixture<DatabaseFixture>
     [Fact]
     public async Task Create_Teacher_Should_Return_A_Teacher()
     {
-    // Arrange
-    var memberDTOMock = new CreateTeacherDto()
-    {
-        Ssn = "123456789",
-        FirstName = "Sadayo",
-        LastName = "Kawakami",
-        PhoneNum = "+12 (34) 567-89",
-        Expiration = new DateTime(2023, 12, 24),
-        CampusID = new Guid()
-    };
-    var memberMock = new Member()
-    {
-        CardID = new Guid(),
-        Ssn = "123456789",
-        FirstName = "Sadayo",
-        LastName = "Kawakami",
-        PhoneNum = "+12 (34) 567-89",
-        Expiration = new DateTime(2023, 12, 24),
-        MemberType = Member.Type.Teacher,
-        AddressID = new Guid(),
-        MemberTypeID = new Guid()
-    };
+        // Arrange
+        var memberDTOMock = new CreateTeacherDto()
+        {
+            Ssn = "123456789",
+            FirstName = "Sadayo",
+            LastName = "Kawakami",
+            PhoneNum = "+12 (34) 567-89",
+            Expiration = new DateTime(2023, 12, 24),
+            CampusID = new Guid()
+        };
+        var memberMock = new Member()
+        {
+            CardID = new Guid(),
+            Ssn = "123456789",
+            FirstName = "Sadayo",
+            LastName = "Kawakami",
+            PhoneNum = "+12 (34) 567-89",
+            Expiration = new DateTime(2023, 12, 24),
+            MemberType = Member.Type.Teacher,
+            AddressID = new Guid(),
+            MemberTypeID = new Guid()
+        };
 
-    _memberRepoMock.Setup(x => x.CreateTeacherAsync(It.IsAny<CreateTeacherDto>()))
-        .ReturnsAsync(memberMock);
+        _memberRepoMock.Setup(x => x.CreateTeacherAsync(It.IsAny<CreateTeacherDto>()))
+            .ReturnsAsync(memberMock);
 
-    // Act
-    var result = await _sut.CreateTeacherAsync(memberDTOMock);
+        // Act
+        var result = await _sut.CreateTeacherAsync(memberDTOMock);
 
-    // Assert
-    Assert.Equal(result, memberMock);
+        // Assert
+        Assert.Equal(result, memberMock);
     }
 
     [Fact]
@@ -124,13 +124,15 @@ public class MemberServiceTests : IClassFixture<DatabaseFixture>
         var cardID = new Guid();
         _memberRepoMock.Setup(x => x.GetAsync(cardID))
             .ReturnsAsync(() => null);
+        _memberRepoMock.Setup(x => x.GetAsync(cardID))
+            .ReturnsAsync(() => null);
 
         // Act
         Func<Task<Member>> action = async () => await _sut.GetAsync(cardID);
 
         // Assert
         var caughtException = await Assert.ThrowsAsync<FinalProjectException>(action);
-        Assert.Equal("The member with card id " + cardID + " does not exist.", caughtException.Message);
+        Assert.Equal($"The member with card id {cardID} does not exist.", caughtException.Message);
     }
 
     [Fact]
@@ -140,6 +142,8 @@ public class MemberServiceTests : IClassFixture<DatabaseFixture>
         var cardID = new Guid();
         _memberRepoMock.Setup(x => x.DeleteAsync(cardID))
             .ReturnsAsync(1);
+        _memberRepoMock.Setup(x => x.GetAsync(cardID))
+            .ReturnsAsync(new Member());
 
         // Act
         var result = await _sut.DeleteAsync(cardID);
@@ -155,12 +159,14 @@ public class MemberServiceTests : IClassFixture<DatabaseFixture>
         var cardID = new Guid();
         _memberRepoMock.Setup(x => x.DeleteAsync(cardID))
             .ReturnsAsync(0);
+        _memberRepoMock.Setup(x => x.GetAsync(cardID))
+            .ReturnsAsync(() => null);
 
         // Act
         Func<Task<int>> action = async () => await _sut.DeleteAsync(cardID);
 
         // Assert
         var caughtException = await Assert.ThrowsAsync<FinalProjectException>(action);
-        Assert.Equal("The member with card id " + cardID + " does not exist.", caughtException.Message);
+        Assert.Equal($"The member with card id {cardID} does not exist.", caughtException.Message);
     }
 }
