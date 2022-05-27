@@ -149,7 +149,7 @@ public class MemberServiceTests : IClassFixture<DatabaseFixture>
         var result = await _sut.DeleteAsync(cardID);
 
         // Assert
-        Assert.Equal(result, 1);
+        Assert.Equal(1, result);
     }
 
     [Fact]
@@ -168,5 +168,48 @@ public class MemberServiceTests : IClassFixture<DatabaseFixture>
         // Assert
         var caughtException = await Assert.ThrowsAsync<FinalProjectException>(action);
         Assert.Equal($"The member with card id {cardID} does not exist.", caughtException.Message);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldUpdate_WhenMemberIsValid()
+    {
+        // Arrange
+        Guid cardID = new Guid();
+        var memberMock = new Member()
+        {
+            CardID = new Guid(),
+        };
+
+        _memberRepoMock.Setup(x => x.UpdateAsync(cardID,memberMock))
+            .ReturnsAsync(1);
+
+        // Act
+        var result = await _sut.UpdateAsync(cardID, memberMock);
+
+        // Assert
+        Assert.Equal(1, result);
+    }
+
+    [Fact]
+    public async Task GetExpiredMemberCards_ShouldReturnMemberCards()
+    {
+        // Arrange
+        var memberMock1 = new Member()
+        {
+            CardID = new Guid(),
+        };
+        var memberMock2 = new Member()
+        {
+            CardID = new Guid(),
+        };
+        IEnumerable<Member> members = new List<Member> { memberMock1, memberMock2 };
+        _memberRepoMock.Setup(x => x.GetExpiredMemberCards())
+            .ReturnsAsync(members);
+
+        // Act
+        var result = await _sut.GetExpiredMemberCards();
+
+        // Assert
+        Assert.Equal(members,result);
     }
 }

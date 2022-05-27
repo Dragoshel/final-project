@@ -12,7 +12,7 @@ public interface IMemberService
 
     Task<int> DeleteAsync(Guid cardID);
 
-    Task UpdateAsync(Guid cardID, Member newMember);
+    Task<int> UpdateAsync(Guid cardID, Member newMember);
 
     Task<IEnumerable<Member>> GetExpiredMemberCards();
 }

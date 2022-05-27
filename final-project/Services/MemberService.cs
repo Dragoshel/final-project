@@ -58,9 +58,9 @@ public class MemberService : IMemberService
         return await _memberRepo.DeleteAsync(cardID);
     }
 
-    public async Task UpdateAsync(Guid cardID, Member newMember)
+    public async Task<int> UpdateAsync(Guid cardID, Member newMember)
     {
-        await _memberRepo.UpdateAsync(cardID, newMember);
+        return await _memberRepo.UpdateAsync(cardID, newMember);
     }
 
     public async Task<IEnumerable<Member>> GetExpiredMemberCards()
