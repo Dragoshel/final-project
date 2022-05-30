@@ -6,7 +6,7 @@ public interface ILoanService
 {
     Task<Loan> CreateAsync(CreateLoanDto createLoanDto);
 
-    Task ReturnBook(Guid barcode);
+    Task<int> ReturnBook(Guid barcode);
 
     Task<IEnumerable<OverdueNoticeDto>> CheckOverdueLoans();
 

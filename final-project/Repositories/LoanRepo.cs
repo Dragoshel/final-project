@@ -26,7 +26,7 @@ public class LoanRepo : ILoanRepo
         }
     }
 
-    public async Task ReturnBook(Guid bookCopyBarcode)
+    public async Task<int> ReturnBook(Guid bookCopyBarcode)
     {
         using (var con = _engine.MakeConnection())
         {
@@ -34,7 +34,7 @@ public class LoanRepo : ILoanRepo
 
             const string SP_NAME = "[dbo].[ReturnBook]";
 
-            await con.ExecuteAsync(SP_NAME, new { bookCopyBarcode = bookCopyBarcode },
+            return await con.ExecuteAsync(SP_NAME, new { bookCopyBarcode = bookCopyBarcode },
                 commandType: CommandType.StoredProcedure);
         }
     }

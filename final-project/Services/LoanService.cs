@@ -28,9 +28,9 @@ public class LoanService : ILoanService
         return loanResult;
     }
 
-    public async Task ReturnBook(Guid barcode)
+    public async Task<int> ReturnBook(Guid barcode)
     {
-        await _loanRepo.ReturnBook(barcode);
+        return await _loanRepo.ReturnBook(barcode);
     }
 
     public async Task<IEnumerable<OverdueNoticeDto>> CheckOverdueLoans()

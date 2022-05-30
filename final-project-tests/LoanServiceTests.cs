@@ -56,114 +56,82 @@ public class LoanServiceTests : IClassFixture<DatabaseFixture>
     }
 
     [Fact]
-    public async Task GetAsync_ShouldReturnMember_WhenMemberExists()
+    public async Task ReturnBook_ShouldReturn1_WhenSuccessful()
     {
         // Arrange
         var cardID = new Guid();
-        var memberMock = new Member { CardID = cardID };
-        _memberRepoMock.Setup(x => x.GetAsync(cardID))
-            .ReturnsAsync(memberMock);
-
-        // Act
-        var member = await _sut.GetAsync(cardID);
-
-        // Assert
-        Assert.Equal(cardID, member.CardID);
-    }
-
-    [Fact]
-    public async Task GetAsync_ShouldThrowFinalProjectException_WhenMemberDoesNotExists()
-    {
-        // Arrange
-        var cardID = new Guid();
-        _memberRepoMock.Setup(x => x.GetAsync(cardID))
-            .ReturnsAsync(() => null);
-        _memberRepoMock.Setup(x => x.GetAsync(cardID))
-            .ReturnsAsync(() => null);
-
-        // Act
-        Func<Task<Member>> action = async () => await _sut.GetAsync(cardID);
-
-        // Assert
-        var caughtException = await Assert.ThrowsAsync<FinalProjectException>(action);
-        Assert.Equal($"The member with card id {cardID} does not exist.", caughtException.Message);
-    }
-
-    [Fact]
-    public async Task DeleteAsync_ShouldDelete_WhenMemberExists()
-    {
-        // Arrange
-        var cardID = new Guid();
-        _memberRepoMock.Setup(x => x.DeleteAsync(cardID))
-            .ReturnsAsync(1);
-        _memberRepoMock.Setup(x => x.GetAsync(cardID))
-            .ReturnsAsync(new Member());
-
-        // Act
-        var result = await _sut.DeleteAsync(cardID);
-
-        // Assert
-        Assert.Equal(1, result);
-    }
-
-    [Fact]
-    public async Task DeleteAsync_ShouldThrowFinalProjectException_WhenMemberDoesNotExists()
-    {
-        // Arrange
-        var cardID = new Guid();
-        _memberRepoMock.Setup(x => x.DeleteAsync(cardID))
-            .ReturnsAsync(0);
-        _memberRepoMock.Setup(x => x.GetAsync(cardID))
-            .ReturnsAsync(() => null);
-
-        // Act
-        Func<Task<int>> action = async () => await _sut.DeleteAsync(cardID);
-
-        // Assert
-        var caughtException = await Assert.ThrowsAsync<FinalProjectException>(action);
-        Assert.Equal($"The member with card id {cardID} does not exist.", caughtException.Message);
-    }
-
-    [Fact]
-    public async Task UpdateAsync_ShouldUpdate_WhenMemberIsValid()
-    {
-        // Arrange
-        Guid cardID = new Guid();
-        var memberMock = new Member()
-        {
-            CardID = new Guid(),
-        };
-
-        _memberRepoMock.Setup(x => x.UpdateAsync(cardID, memberMock))
+        _loanRepoMock.Setup(x => x.ReturnBook(cardID))
             .ReturnsAsync(1);
 
         // Act
-        var result = await _sut.UpdateAsync(cardID, memberMock);
+        var isSuccesful = await _sut.ReturnBook(cardID);
 
         // Assert
-        Assert.Equal(1, result);
+        Assert.Equal(1, isSuccesful);
     }
 
     [Fact]
-    public async Task GetExpiredMemberCards_ShouldReturnMemberCards()
+    public async Task CheckOverdueLoans_ShouldReturnAllOverdueLoans()
     {
         // Arrange
-        var memberMock1 = new Member()
+        var overdueDTOMock1 = new OverdueNoticeDto()
         {
-            CardID = new Guid(),
+            StartDate = new DateTime(2022, 5, 27),
+            DueDate = new DateTime(2022, 9, 10),
+            Title = "Bible",
+            FirstName = "Nick",
+            LastName = "Smith",
+            Country = "USA",
+            City = "Atlanta",
+            AddressLine1 = "Something street",
+            AddressLine2 = "1st flooe",
+            PostCode = "6666"
         };
-        var memberMock2 = new Member()
+        var overdueDTOMock2 = new OverdueNoticeDto()
         {
-            CardID = new Guid(),
+            StartDate = new DateTime(2022, 5, 24),
+            DueDate = new DateTime(2022, 9, 7),
+            Title = "Game Of Thrones",
+            FirstName = "George",
+            LastName = "Martin",
+            Country = "USA",
+            City = "Atlanta",
+            AddressLine1 = "Another street",
+            PostCode = "6666"
         };
-        IEnumerable<Member> members = new List<Member> { memberMock1, memberMock2 };
-        _memberRepoMock.Setup(x => x.GetExpiredMemberCards())
-            .ReturnsAsync(members);
+        IEnumerable<OverdueNoticeDto> overdueLoans = new List<OverdueNoticeDto> { overdueDTOMock1, overdueDTOMock2 };
+        _loanRepoMock.Setup(x => x.CheckOverdueLoans())
+            .ReturnsAsync(overdueLoans);
+
 
         // Act
-        var result = await _sut.GetExpiredMemberCards();
+        var result = await _sut.CheckOverdueLoans();
 
         // Assert
-        Assert.Equal(members, result);
+        Assert.Equal(overdueLoans, result);
+    }
+
+    [Fact]
+    public async Task LoanFromLibrary_ShouldReturnAnInterLibraryLoan()
+    {
+        // Arrange
+        Guid libaryID = new Guid();
+        Guid bookCopyBarcode = new Guid();
+        var libraryLoanMock = new LoanFromLibraryDto()
+        {
+            LibraryID = libaryID,
+            BookCopyBarcode = bookCopyBarcode,
+            DueDate = new DateTime(2022, 12, 15),
+            Direction = false
+        };
+        InterLibrary_Loan loan = new InterLibrary_Loan();
+        _loanRepoMock.Setup(x => x.LoanFromLibrary(libraryLoanMock))
+            .ReturnsAsync(loan);
+
+        // Act
+        var result = await _sut.LoanFromLibrary(libraryLoanMock);
+
+        // Assert
+        Assert.Equal(loan, result);
     }
 }
