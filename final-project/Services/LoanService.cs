@@ -28,6 +28,27 @@ public class LoanService : ILoanService
         return loanResult;
     }
 
+    public async Task<IEnumerable<IEnumerable<Guid>>> CreateMultipleAsync(IEnumerable<CreateLoanDto> createLoanDtos)
+    {
+        List<Guid> successfulLoans = new List<Guid>();
+        List<Guid> failedLoans = new List<Guid>();
+        foreach (CreateLoanDto createLoanDto in createLoanDtos)
+        {
+            var loanResult = await _loanRepo.CreateAsync(createLoanDto);
+
+            if (loanResult is not null)
+                successfulLoans.Add(createLoanDto.Barcode);
+            else
+                failedLoans.Add(createLoanDto.Barcode);
+        }
+        List<List<Guid>> result = new List<List<Guid>>()
+        {
+            successfulLoans,
+            failedLoans
+        };
+        return result;
+    }
+
     public async Task<int> ReturnBook(Guid barcode)
     {
         return await _loanRepo.ReturnBook(barcode);

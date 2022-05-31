@@ -42,7 +42,7 @@ public class LoanServiceTests : IClassFixture<DatabaseFixture>
             StartDate = new DateTime(2022,5,27),
             DueDate = new DateTime(2022,9,10),
             MemberCardID = memberCardID,
-            BookCopyBarcode =barcode
+            BookCopyBarcode = barcode
         };
 
         _loanRepoMock.Setup(x => x.CreateAsync(It.IsAny<CreateLoanDto>()))
@@ -53,6 +53,80 @@ public class LoanServiceTests : IClassFixture<DatabaseFixture>
 
         // Assert
         Assert.Equal(loanMock,result);
+    }
+
+    [Fact]
+    public async Task CreateMultipleAsync_Should_Return_AListOfSuccessfulAndFailedLoans()
+    {
+        // Arrange
+        Guid memberCardID1 = new Guid();
+        Guid barcode1 = new Guid();
+        Guid memberCardID2 = new Guid();
+        Guid barcode2 = new Guid();
+        Guid memberCardID3 = new Guid();
+        Guid barcode3 = new Guid();
+        var loanDTOMock1 = new CreateLoanDto()
+        {
+            MemberCardID = memberCardID1,
+            Barcode = barcode1
+        };
+        var loanDTOMock2 = new CreateLoanDto()
+        {
+            MemberCardID = memberCardID2,
+            Barcode = barcode2
+        };
+        var loanDTOMock3 = new CreateLoanDto()
+        {
+            MemberCardID = memberCardID3,
+            Barcode = barcode3
+        };
+        var loanMock1 = new Loan()
+        {
+            ID = new Guid(),
+            StartDate = new DateTime(2022, 5, 27),
+            DueDate = new DateTime(2022, 9, 10),
+            MemberCardID = memberCardID1,
+            BookCopyBarcode = barcode1
+        };
+        Loan? loanMock2 = null;
+        var loanMock3 = new Loan()
+        {
+            ID = new Guid(),
+            StartDate = new DateTime(2022, 5, 22),
+            DueDate = new DateTime(2022, 9, 3),
+            MemberCardID = memberCardID3,
+            BookCopyBarcode = barcode3
+        };
+        List<CreateLoanDto> input = new List<CreateLoanDto>()
+        {
+            loanDTOMock1,
+            loanDTOMock2,
+            loanDTOMock3
+        };
+        _loanRepoMock.Setup(x => x.CreateAsync(loanDTOMock1))
+            .ReturnsAsync(loanMock1);
+        _loanRepoMock.Setup(x => x.CreateAsync(loanDTOMock2))
+            .ReturnsAsync(loanMock2);
+        _loanRepoMock.Setup(x => x.CreateAsync(loanDTOMock3))
+            .ReturnsAsync(loanMock3);
+        List<List<Guid>> expected = new List<List<Guid>>()
+        {
+            new List<Guid>()
+            {
+                barcode1,
+                barcode3
+            },
+            new List<Guid>()
+            {
+                barcode2
+            },
+        };
+
+        // Act
+        var result = await _sut.CreateMultipleAsync(input);
+
+        // Assert
+        Assert.Equal(expected, result);
     }
 
     [Fact]
