@@ -3,6 +3,10 @@ services:
     build:
       context: .
       target: test
+    volumes:
+      - ./final-project-tests:/app/final-project-tests
+    ports:
+      - "5001:5001"
     depends_on:
       - db
   db:

@@ -22,7 +22,7 @@ public class MemberServiceTests : IClassFixture<DatabaseFixture>
     {
         _fixture = fixture;
 
-        _sut = new MemberService(_fixture.engine, _memberRepoMock.Object, _loggerMock.Object);
+        _sut = new MemberService(_fixture.CreateEngine(), _memberRepoMock.Object, _loggerMock.Object);
     }
 
     [Fact]

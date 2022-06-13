@@ -60,7 +60,7 @@ public class LoanRepo : ILoanRepo
         {
             con.Open();
 
-            const string SP_NAME = "[dbo].[LoanFromLibrary]";
+            const string SP_NAME = "[dbo].[CreateInterLibraryLoan]";
 
             var interLibraryLoan = await con.QueryAsync<InterLibrary_Loan>(SP_NAME, loanFromLibraryDto,
                 commandType: CommandType.StoredProcedure);

@@ -22,7 +22,7 @@ public class LoanServiceTests : IClassFixture<DatabaseFixture>
     {
         _fixture = fixture;
 
-        _sut = new LoanService(_fixture.engine, _loanRepoMock.Object, _loggerMock.Object);
+        _sut = new LoanService(_fixture.CreateEngine(), _loanRepoMock.Object, _loggerMock.Object);
     }
 
     [Fact]

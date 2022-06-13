@@ -21,7 +21,7 @@ public class BookServiceTests : IClassFixture<DatabaseFixture>
     public BookServiceTests(DatabaseFixture fixture)
     {
         _fixture = fixture;
-        _sut = new BookService(_fixture.engine, _bookRepoMock.Object, _loggerMock.Object);
+        _sut = new BookService(_fixture.CreateEngine(), _bookRepoMock.Object, _loggerMock.Object);
     }
 
     [Fact]

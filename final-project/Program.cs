@@ -23,15 +23,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.SeedDatabase("Data/SQL/tables.sql");
-    app.SeedDatabase("Data/SQL/fnGetType.sql");
-    app.SeedDatabase("Data/SQL/spCreateStudent.sql");
-    app.SeedDatabase("Data/SQL/spCreateTeacher.sql");
-    app.SeedDatabase("Data/SQL/spCheckOverdueLoans.sql");
-    app.SeedDatabase("Data/SQL/spReturnBook.sql");
-    app.SeedDatabase("Data/SQL/spLoanFromLibrary.sql");
-    app.SeedDatabase("Data/SQL/spCreateLoan.sql");
-    app.SeedDatabase("Data/SQL/spCheckExpiredMemberCards.sql");
+    app.SeedDatabaseFromFiles("Data/SQL");
     app.UseSwagger();
     app.UseSwaggerUI();
 }

@@ -3,7 +3,7 @@ using Dapper;
 
 namespace FinalProject.Data;
 
-public class Engine
+public class Engine : IDisposable
 {
     private readonly SqlConnectionStringBuilder builder;
 
@@ -16,6 +16,8 @@ public class Engine
         builder.UserID = user;
         builder.Password = password;
     }
+
+    public void Dispose() {}
 
     public SqlConnection MakeConnection()
     {
